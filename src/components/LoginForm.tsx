@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { getIsAdmin } from "@/lib/auth";
 
 export function LoginForm({ mode }: { mode: "student" | "admin" }) {
@@ -13,7 +14,27 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const hydrated = useHydrated();
+
+  async function signInWithGoogle() {
+    setGoogleBusy(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setGoogleBusy(false);
+      toast.error(result.error.message);
+      return;
+    }
+    if (result.redirected) {
+      // Browser is heading to Google — the app home page finishes the redirect after sign-in.
+      return;
+    }
+    const admin = await getIsAdmin(result.tokens.user.id);
+    setGoogleBusy(false);
+    navigate({ to: admin ? "/admin" : "/dashboard" });
+  }
 
   async function resolveEmail(v: string) {
     const t = v.trim();
