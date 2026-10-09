@@ -58,7 +58,7 @@ function Students() {
       <Input className="mt-4 max-w-sm" placeholder="Search by name, ID or class..." value={q} onChange={(e) => setQ(e.target.value)} />
       <div className="mt-4 overflow-x-auto rounded-2xl border bg-card">
         <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="bg-muted"><tr><th className="p-3">Name</th><th className="p-3">Student ID</th><th className="p-3">Class</th><th className="p-3">Contact</th><th className="p-3">Tests taken</th><th className="p-3">Average</th><th className="p-3"></th></tr></thead>
+          <thead className="bg-muted"><tr><th className="p-3">Name</th><th className="p-3">STUDENT ID</th><th className="p-3">Class</th><th className="p-3">Contact</th><th className="p-3">Tests taken</th><th className="p-3">Average</th><th className="p-3"></th></tr></thead>
           <tbody>
             {rows.map((s) => {
               const mine = (results.data ?? []).filter((r) => r.student_id === s.id && r.status === "submitted");

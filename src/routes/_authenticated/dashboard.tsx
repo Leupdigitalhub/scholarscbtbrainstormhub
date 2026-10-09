@@ -52,7 +52,7 @@ function Dashboard() {
             <h1 className="truncate text-2xl font-extrabold">{name}</h1>
             <div className="mt-1 flex flex-wrap gap-x-5 text-sm text-muted-foreground">
               {me?.profile?.class && <span>Class: <b className="text-foreground">{me.profile.class}</b></span>}
-              {me?.profile?.student_id && <span>Reg No: <b className="text-foreground">{me.profile.student_id}</b></span>}
+              {me?.profile?.student_id && <span>STUDENT ID: <b className="text-foreground">{me.profile.student_id}</b></span>}
             </div>
           </div>
           <span className="rounded-full bg-success px-3 py-1 text-xs font-bold uppercase text-success-foreground">Eligible</span>
