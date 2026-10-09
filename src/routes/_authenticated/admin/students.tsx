@@ -12,6 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminResults } from "@/lib/admin-data";
 import { deleteStudent } from "@/lib/students.functions";
+import { StudentAvatar, StudentProfileDialog } from "@/components/StudentProfileDialog";
 
 export const Route = createFileRoute("/_authenticated/admin/students")({
   component: Students,
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/admin/students")({
 function Students() {
   const [q, setQ] = useState("");
   const [del, setDel] = useState<{ id: string; name: string } | null>(null);
+  const [view, setView] = useState<Parameters<typeof StudentProfileDialog>[0]["s"]>(null);
   const [busy, setBusy] = useState(false);
   const qc = useQueryClient();
   const remove = useServerFn(deleteStudent);
@@ -65,7 +67,7 @@ function Students() {
               const avg = mine.length ? Math.round(mine.reduce((a, r) => a + r.percent, 0) / mine.length) : null;
               return (
                 <tr key={s.id} className="border-t">
-                  <td className="p-3 font-bold">{s.full_name}</td><td className="p-3">{s.student_id}</td><td className="p-3">{s.class}</td>
+                  <td className="p-3 font-bold"><button className="flex items-center gap-2 text-left hover:underline" onClick={() => setView(s)}><StudentAvatar id={s.id} name={s.full_name} />{s.full_name}</button></td><td className="p-3">{s.student_id}</td><td className="p-3">{s.class}</td>
                   <td className="p-3">{s.email}<div className="text-xs text-muted-foreground">{s.phone}</div></td><td className="p-3">{mine.length}</td><td className="p-3">{avg === null ? "—" : `${avg}%`}</td>
                   <td className="p-3 text-right">
                     <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => setDel({ id: s.id, name: s.full_name })}>
@@ -79,6 +81,7 @@ function Students() {
           </tbody>
         </table>
       </div>
+      <StudentProfileDialog s={view} results={results.data ?? []} onClose={() => setView(null)} />
       <AlertDialog open={!!del} onOpenChange={(o) => !o && setDel(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
