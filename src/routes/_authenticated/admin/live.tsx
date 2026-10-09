@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { AlertTriangle, Camera, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LiveView, ProctorReview } from "@/components/Proctor";
@@ -24,7 +24,7 @@ function LiveMonitor() {
   const [tick, setTick] = useState(0);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ["admin-live"],
-    refetchInterval: 10000,
+    refetchInterval: 5000,
     queryFn: async () => {
       const rows = (await supabase.rpc("admin_live_attempts")).data ?? [];
       const paths = rows.map((r) => r.last_photo).filter((p): p is string => !!p);
@@ -42,7 +42,7 @@ function LiveMonitor() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold">Live Monitor</h1>
-          <p className="text-sm text-muted-foreground">Students writing an exam right now. Cards update every 10 seconds; the selected student updates every few seconds. Every exam is recorded so you can replay it later from Results.</p>
+          <p className="text-sm text-muted-foreground">Students writing an exam right now. CCTV grid: every camera refreshes every second. Every exam is recorded so you can replay it later from Results.</p>
         </div>
         <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
           <RefreshCw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} />Refresh
@@ -62,8 +62,7 @@ function LiveMonitor() {
                   className={cn("overflow-hidden rounded-2xl border-2 bg-card text-left transition",
                     sel === r.attempt_id ? "border-primary" : flagged ? "border-destructive/50" : "border-border")}>
                   <div className="relative aspect-[4/3] bg-muted">
-                    {r.url ? <img src={r.url} alt={r.full_name ?? "Student"} className="h-full w-full object-cover" /> :
-                      <div className="flex h-full items-center justify-center text-sm text-muted-foreground"><Camera className="mr-2 h-4 w-4" />No photo yet</div>}
+                    <LiveView attemptId={r.attempt_id} every={1000} compact />
                     {flagged && <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground"><AlertTriangle className="h-3 w-3" />Alert</span>}
                   </div>
                   <div className="p-3">
@@ -87,7 +86,7 @@ function LiveMonitor() {
               <>
                 <p className="font-bold">{current.full_name}</p>
                 <p className="mb-3 text-xs text-muted-foreground">{current.test_title}</p>
-                <div className="mb-4"><LiveView key={current.attempt_id} attemptId={current.attempt_id} /></div>
+                <div className="mb-4"><LiveView key={current.attempt_id} attemptId={current.attempt_id} every={1000} /></div>
                 <ProctorReview key={`${current.attempt_id}-${tick}`} attemptId={current.attempt_id} />
               </>
             )}

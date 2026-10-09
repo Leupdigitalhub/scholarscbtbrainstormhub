@@ -9,6 +9,38 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useLists } from "@/lib/auth";
+import { ChatThread } from "@/components/ChatThread";
+import { loadThread } from "@/lib/support-messages";
+import { cn } from "@/lib/utils";
+
+function Inbox({ names }: { names: Map<string, string> }) {
+  const [open, setOpen] = useState<string | null>(null);
+  const q = useQuery({ queryKey: ["support-inbox"], queryFn: () => loadThread(), refetchInterval: 10000, retry: false });
+  if (q.error) return <p className="mt-3 rounded-xl border bg-card p-4 text-sm text-muted-foreground">Student inbox is not switched on yet (the messages table still needs to be added to your backend).</p>;
+  const threads = new Map<string, { last: string; at: string; unread: number }>();
+  for (const m of q.data ?? []) {
+    const t = threads.get(m.student_id) ?? { last: "", at: "", unread: 0 };
+    t.last = m.body; t.at = m.created_at;
+    if (m.sender === "student" && !m.is_read) t.unread++;
+    threads.set(m.student_id, t);
+  }
+  const list = [...threads.entries()].sort((a, b) => b[1].at.localeCompare(a[1].at));
+  return (
+    <div className="mt-3 grid gap-3 md:grid-cols-[260px_1fr]">
+      <div className="max-h-[65vh] divide-y overflow-y-auto rounded-2xl border bg-card">
+        {list.length === 0 && <p className="p-4 text-sm text-muted-foreground">No student messages yet.</p>}
+        {list.map(([sid, t]) => (
+          <button key={sid} onClick={() => setOpen(sid)} className={cn("block w-full p-3 text-left hover:bg-muted", open === sid && "bg-primary/10")}>
+            <p className="flex items-center justify-between font-bold"><span className="truncate">{names.get(sid) || "Student"}</span>
+              {t.unread > 0 && <span className="rounded-full bg-destructive px-1.5 text-xs text-destructive-foreground">{t.unread}</span>}</p>
+            <p className="truncate text-xs text-muted-foreground">{t.last}</p>
+          </button>
+        ))}
+      </div>
+      {open ? <ChatThread key={open} studentId={open} me="admin" /> : <p className="rounded-2xl border bg-card p-6 text-center text-sm text-muted-foreground">Choose a conversation to read and reply.</p>}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/_authenticated/admin/messages")({
   head: () => ({ meta: [{ title: "Messages to Students — SCHOLARS CBT" }, { name: "robots", content: "noindex" }] }),
@@ -45,8 +77,11 @@ function Messages() {
   }
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="text-2xl font-extrabold">Messages to Students</h1>
+    <div className="max-w-5xl">
+      <h1 className="text-2xl font-extrabold">Student Inbox</h1>
+      <p className="text-sm text-muted-foreground">Private messages from students. Tap one to reply.</p>
+      <Inbox names={new Map((students.data ?? []).map((s) => [s.id, s.full_name ?? ""]))} />
+      <h1 className="mt-10 text-2xl font-extrabold">Messages to Students</h1>
       <p className="text-sm text-muted-foreground">Students see these instantly at the top of their dashboard.</p>
       <form onSubmit={send} className="mt-5 space-y-4 rounded-2xl border bg-card p-5">
         <div className="space-y-1.5"><Label>Title</Label><Input required value={f.title} onChange={(e) => setF((p) => ({ ...p, title: e.target.value }))} placeholder="e.g. Mock exam on Friday" /></div>
