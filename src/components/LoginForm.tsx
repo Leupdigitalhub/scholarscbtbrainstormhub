@@ -31,7 +31,8 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
       // Browser is heading to Google — the app home page finishes the redirect after sign-in.
       return;
     }
-    const admin = await getIsAdmin(result.tokens.user.id);
+    const { data } = await supabase.auth.getUser();
+    const admin = data.user ? await getIsAdmin(data.user.id) : false;
     setGoogleBusy(false);
     navigate({ to: admin ? "/admin" : "/dashboard" });
   }
