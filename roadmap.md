@@ -1,0 +1,18 @@
+# Roadmap
+- [x] Core online test platform (auth, roles, tests, questions, timer, autosave, marking, results)
+- [x] Rebrand to SCHOLARS CBT (blue/green, tagline, homepage sections)
+- [x] Phone field, class/subject lists managed by admin
+- [x] Student dashboard: Available / Upcoming / Completed / My Results
+- [x] CBT interface: flag, clear answer, colour-coded navigator, student name
+- [x] Attempts allowed per test
+- [x] Grades with editable grading scale
+- [x] Question bank: filter + reuse in other tests; results filter by subject
+- [x] Remove test accounts so owner can claim admin
+- [x] Finish browser verification of JAMB randomisation + immediate results
+- [x] Bulk question import (paste or file upload) so large banks (e.g. 1000 questions) can be loaded at once
+- [x] Paginate/limit question lists so 1000-row tests stay fast in admin pages
+- [x] Continuous exam recording (30s clips) + near-live view in Live Monitor
+- [x] Admin notification bell (start/submit/tab switch/camera off) + Gmail digest when admin is away
+- [x] Student portal pages (exams, results, practice, science, settings) + homepage glow
+- [x] Messages to students (all / class / one student) on dashboard
+- [ ] Re-link workspace integrations after workspace move: Gmail connection must be linked to this project so admin email digests work

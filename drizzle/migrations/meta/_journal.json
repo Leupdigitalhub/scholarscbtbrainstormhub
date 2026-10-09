@@ -1,0 +1,104 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791459175957,
+      "tag": "0000_base_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791459201775,
+      "tag": "0001_scholars_cbt_extensions",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791459275751,
+      "tag": "0002_jamb_randomisation",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791459814707,
+      "tag": "0003_multi_subject_tests",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791459850545,
+      "tag": "0004_proctoring_corrections_live",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791459889024,
+      "tag": "0005_notifications_recording_gift",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791459949994,
+      "tag": "0006_english_compulsory_and_study_syllabus",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791460806002,
+      "tag": "0007_leaderboard_logins_explanations_proctor_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791478221176,
+      "tag": "0008_bank_questions",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791483467906,
+      "tag": "0009_gift_toggle",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791494571547,
+      "tag": "0010_auto_student_ids",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791551550136,
+      "tag": "0011_unlimited_attempts",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791552377704,
+      "tag": "0012_corrections_follow_student_order",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791552403945,
+      "tag": "0013_corrections_options_as_shown",
+      "breakpoints": true
+    }
+  ]
+}
