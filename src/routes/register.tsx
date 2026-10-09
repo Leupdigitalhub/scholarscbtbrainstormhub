@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useLists } from "@/lib/auth";
 import { SelfieCapture } from "@/components/SelfieCapture";
+import { PasswordInput } from "@/components/PasswordInput";
 import { makeStudentId, uploadAvatar, savePendingAvatar } from "@/lib/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -78,7 +79,7 @@ function Register() {
         {fields.map(([k, label, type]) => (
           <div key={k} className="space-y-1.5">
             <Label htmlFor={k}>{label}</Label>
-            <Input id={k} type={type} required value={f[k]} onChange={set(k)} className="h-12 text-base" />
+            {type === "password" ? <PasswordInput id={k} required value={f[k]} onChange={set(k)} className="h-12 text-base" /> : <Input id={k} type={type} required value={f[k]} onChange={set(k)} className="h-12 text-base" />}
           </div>
         ))}
         <div className="space-y-1.5">

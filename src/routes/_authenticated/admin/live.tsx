@@ -42,7 +42,7 @@ function LiveMonitor() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold">Live Monitor</h1>
-          <p className="text-sm text-muted-foreground">Students writing an exam right now. CCTV grid: every camera refreshes every second. Every exam is recorded so you can replay it later from Results.</p>
+          <p className="text-sm text-muted-foreground">Students writing an exam right now. CCTV grid: every camera checks every 0.02 seconds for the newest recording. Every exam is recorded so you can replay it later from Results.</p>
         </div>
         <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
           <RefreshCw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} />Refresh
@@ -62,7 +62,7 @@ function LiveMonitor() {
                   className={cn("overflow-hidden rounded-2xl border-2 bg-card text-left transition",
                     sel === r.attempt_id ? "border-primary" : flagged ? "border-destructive/50" : "border-border")}>
                   <div className="relative aspect-[4/3] bg-muted">
-                    <LiveView attemptId={r.attempt_id} every={1000} compact />
+                    <LiveView attemptId={r.attempt_id} every={20} compact />
                     {flagged && <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground"><AlertTriangle className="h-3 w-3" />Alert</span>}
                   </div>
                   <div className="p-3">
@@ -86,7 +86,7 @@ function LiveMonitor() {
               <>
                 <p className="font-bold">{current.full_name}</p>
                 <p className="mb-3 text-xs text-muted-foreground">{current.test_title}</p>
-                <div className="mb-4"><LiveView key={current.attempt_id} attemptId={current.attempt_id} every={1000} /></div>
+                <div className="mb-4"><LiveView key={current.attempt_id} attemptId={current.attempt_id} every={20} /></div>
                 <ProctorReview key={`${current.attempt_id}-${tick}`} attemptId={current.attempt_id} />
               </>
             )}
