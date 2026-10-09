@@ -137,15 +137,14 @@ export function Proctor({ attemptId, studentId, children }: { attemptId: string;
     }
   }, [ready, agreed]);
 
+  // Photo snapshots removed — the continuous video+audio recording is the only capture.
+  void snap; void SNAP_MS; void LIVE_MS;
   useEffect(() => {
     if (!active) return;
-    const first = setTimeout(() => void snap(), 3000);
-    const t = setInterval(() => void snap(), SNAP_MS);
-    const live = setInterval(() => void snap("live"), LIVE_MS);
     const f = setInterval(flush, FLUSH_MS);
     flush();
-    return () => { clearTimeout(first); clearInterval(t); clearInterval(live); clearInterval(f); };
-  }, [active, snap]);
+    return () => { clearInterval(f); };
+  }, [active]);
 
   // Face tracking: count seconds with no face; auto-submit after the limit.
   useEffect(() => {
@@ -353,18 +352,24 @@ export function RecordingPlayer({ clips }: { clips: { url: string; at: string }[
   );
 }
 
-/** Near-live view: refreshes the student's newest camera frame every few seconds. */
-export function LiveView({ attemptId, every = 2000, compact = false }: { attemptId: string; every?: number; compact?: boolean }) {
+/** Near-live view: checks for the student's newest recorded clip (with sound) and plays it. */
+export function LiveView({ attemptId, every = 20, compact = false }: { attemptId: string; every?: number; compact?: boolean }) {
   const [url, setUrl] = useState<string | null>(null);
   const [at, setAt] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
+    let busy = false;
+    let lastPath = "";
     const load = async () => {
-      const { data } = await supabase.from("proctor_events").select("photo_path,created_at")
-        .eq("attempt_id", attemptId).in("kind", ["live", "snapshot"]).order("created_at", { ascending: false }).limit(1).maybeSingle();
-      if (!alive || !data?.photo_path) return;
-      const s = await supabase.storage.from("proctor").createSignedUrl(data.photo_path, 120);
-      if (alive && s.data) { setUrl(s.data.signedUrl); setAt(data.created_at); }
+      if (busy) return; // never stack requests, even at a 20ms interval
+      busy = true;
+      try {
+        const { data } = await supabase.from("proctor_events").select("photo_path,created_at")
+          .eq("attempt_id", attemptId).eq("kind", "video").order("created_at", { ascending: false }).limit(1).maybeSingle();
+        if (!alive || !data?.photo_path || data.photo_path === lastPath) return;
+        const s = await supabase.storage.from("proctor").createSignedUrl(data.photo_path, 600);
+        if (alive && s.data) { lastPath = data.photo_path; setUrl(s.data.signedUrl); setAt(data.created_at); }
+      } finally { busy = false; }
     };
     void load();
     const t = setInterval(load, every);
@@ -373,13 +378,13 @@ export function LiveView({ attemptId, every = 2000, compact = false }: { attempt
   return (
     <div>
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-muted">
-        {url ? <img src={url} alt="Live camera" className="h-full w-full object-cover" /> :
-          <p className="flex h-full items-center justify-center text-sm text-muted-foreground">Waiting for camera...</p>}
+        {url ? <video key={url} src={url} autoPlay playsInline muted={compact} controls={!compact} className="h-full w-full object-cover" /> :
+          <p className="flex h-full items-center justify-center text-sm text-muted-foreground">Waiting for recording...</p>}
         <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">
           <span className="h-2 w-2 animate-pulse rounded-full bg-destructive-foreground" />LIVE
         </span>
       </div>
-      {at && !compact && <p className="mt-1 text-xs text-muted-foreground">Updated {new Date(at).toLocaleTimeString()}</p>}
+      {at && !compact && <p className="mt-1 text-xs text-muted-foreground">Clip from {new Date(at).toLocaleTimeString()}</p>}
     </div>
   );
 }

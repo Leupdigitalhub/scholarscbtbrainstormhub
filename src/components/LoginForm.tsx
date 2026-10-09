@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { getIsAdmin } from "@/lib/auth";
+import { PasswordInput } from "@/components/PasswordInput";
 
 export function LoginForm({ mode }: { mode: "student" | "admin" }) {
   const navigate = useNavigate();
@@ -81,7 +82,7 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 text-base" />
+        <PasswordInput id="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 text-base" />
         {mode === "student" && (
           <button type="button" onClick={forgot} className="text-sm font-bold text-primary hover:underline">Forgot password?</button>
         )}
