@@ -415,6 +415,33 @@ export type Database = {
         }
         Relationships: []
       }
+      support_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_read: boolean
+          sender: string
+          student_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          sender: string
+          student_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          sender?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
       tests: {
         Row: {
           attempts_allowed: number
