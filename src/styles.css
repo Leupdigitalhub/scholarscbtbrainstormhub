@@ -144,3 +144,15 @@
   100% { background-position: 30% 100%; }
 }
 @media (prefers-reduced-motion: reduce) { body { animation: none; } }
+
+/* Exam surface: no text selection, tap-to-search, callouts or drag on mobile */
+.exam-lock, .exam-lock * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-drag: none;
+}
+.exam-lock input, .exam-lock textarea { -webkit-user-select: text !important; user-select: text !important; }
+.exam-lock ::selection { background: transparent; }
+@keyframes spark-bar { from { width: 0% } to { width: 100% } }

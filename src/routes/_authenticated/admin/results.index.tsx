@@ -34,7 +34,7 @@ function Results() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-extrabold">Results</h1>
         <Button variant="outline" onClick={() => downloadCsv("results.csv", [
-          ["Student", "Student ID", "Class", "Test", "Score", "Total", "Percentage", "Grade", "Status", "Submitted"],
+          ["Student", "STUDENT ID", "Class", "Test", "Score", "Total", "Percentage", "Grade", "Status", "Submitted"],
           ...rows.map((r) => [r.student_name, r.student_code, r.student_class, r.test_title, r.score, r.total, `${r.percent}%`, g(r.percent), status(r), r.submitted_at ? new Date(r.submitted_at).toLocaleString() : ""]),
         ])}><Download className="mr-1 h-4 w-4" />Export CSV</Button>
       </div>

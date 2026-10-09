@@ -53,7 +53,7 @@ function Settings() {
           <div><Label>Email</Label><Input value={me?.user.email ?? ""} disabled /></div>
           <div className="grid grid-cols-2 gap-3">
             <div><Label>Class</Label><Input value={me?.profile?.class ?? ""} disabled /></div>
-            <div><Label>Reg No</Label><Input value={me?.profile?.student_id ?? ""} disabled /></div>
+            <div><Label>STUDENT ID</Label><Input value={me?.profile?.student_id ?? ""} disabled /></div>
           </div>
           <Button disabled={busy} onClick={saveProfile}>Save profile</Button>
         </div>
@@ -61,7 +61,7 @@ function Settings() {
           <h2 className="font-bold">Change password</h2>
           <div><Label>New password</Label><Input type="password" value={pw} onChange={(e) => setPw(e.target.value)} /></div>
           <Button disabled={busy} onClick={savePw}>Update password</Button>
-          <p className="text-sm text-muted-foreground">Class and Reg No can only be changed by your school admin.</p>
+          <p className="text-sm text-muted-foreground">Class and STUDENT ID can only be changed by your school admin.</p>
         </div>
       </div>
     </StudentShell>

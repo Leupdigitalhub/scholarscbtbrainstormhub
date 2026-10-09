@@ -16,3 +16,7 @@
 - [x] Student portal pages (exams, results, practice, science, settings) + homepage glow
 - [x] Messages to students (all / class / one student) on dashboard
 - [ ] Re-link workspace integrations after workspace move: Gmail connection must be linked to this project so admin email digests work
+- [x] Strict rules popup, face-missing 10s auto-submit, audio+video clips, 1-exit auto-submit, exam text lock
+- [x] Registration selfie avatar, random SCHCBT#### STUDENT ID + welcome popup, "STUDENT ID" label everywhere
+- [x] Brain Spark 30s moral lessons, activity merge + select-to-delete, 1-second CCTV grid
+- [ ] Student–Admin messaging: screens built; needs support_messages table (docs/sql/support_messages.sql) run on the backend — no database access from this project

@@ -4,6 +4,8 @@ import { useEffect, type ReactNode } from "react";
 import { BookOpen, CalendarClock, Clock, FileQuestion, GraduationCap, ShieldCheck } from "lucide-react";
 import { StudentShell } from "@/components/StudentShell";
 import { Announcements } from "@/components/Announcements";
+import { BrainSpark } from "@/components/BrainSpark";
+import { useAvatar } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/lib/auth";
@@ -40,6 +42,7 @@ function Dashboard() {
   const completed = all.filter((t) => completedIds.has(t.id) && !available.includes(t));
 
   const name = me?.profile?.full_name || "Student";
+  const avatar = useAvatar(me?.user.id);
   return (
     <StudentShell>
       <div className="overflow-hidden rounded-2xl border-2 border-primary bg-card shadow-sm">
@@ -47,12 +50,12 @@ function Dashboard() {
           <span>Candidate Slip</span><span>{new Date().toLocaleDateString([], { dateStyle: "medium" })}</span>
         </div>
         <div className="flex flex-wrap items-center gap-4 p-5">
-          <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-accent font-display text-2xl font-extrabold text-accent-foreground">{name.charAt(0).toUpperCase()}</span>
+          {avatar.data ? <img src={avatar.data} alt={name} className="h-16 w-16 rounded-xl object-cover" /> : <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-accent font-display text-2xl font-extrabold text-accent-foreground">{name.charAt(0).toUpperCase()}</span>}
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-2xl font-extrabold">{name}</h1>
             <div className="mt-1 flex flex-wrap gap-x-5 text-sm text-muted-foreground">
               {me?.profile?.class && <span>Class: <b className="text-foreground">{me.profile.class}</b></span>}
-              {me?.profile?.student_id && <span>Reg No: <b className="text-foreground">{me.profile.student_id}</b></span>}
+              {me?.profile?.student_id && <span>STUDENT ID: <b className="text-foreground">{me.profile.student_id}</b></span>}
             </div>
           </div>
           <span className="rounded-full bg-success px-3 py-1 text-xs font-bold uppercase text-success-foreground">Eligible</span>
@@ -63,6 +66,8 @@ function Dashboard() {
           <Stat n={submitted.length} l="Completed" />
         </div>
       </div>
+
+      <BrainSpark />
 
       <div className="relative mt-4 overflow-hidden rounded-2xl text-primary-foreground shadow-sm">
         <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=70" alt="Science laboratory" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />

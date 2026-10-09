@@ -43,7 +43,7 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
   }
 
   async function forgot() {
-    if (!email.trim()) { toast.error("Type your email or Student ID above first, then tap Forgot password."); return; }
+    if (!email.trim()) { toast.error("Type your email or STUDENT ID above first, then tap Forgot password."); return; }
     const addr = await resolveEmail(email);
     if (!addr) { toast.error("No student found with that ID."); return; }
     const { error } = await supabase.auth.resetPasswordForEmail(addr, { redirectTo: `${window.location.origin}/reset-password` });
@@ -54,7 +54,7 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
   return (
     <form onSubmit={submit} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="email">{mode === "student" ? "Email or Student ID" : "Email"}</Label>
+        <Label htmlFor="email">{mode === "student" ? "Email or STUDENT ID" : "Email"}</Label>
         <Input id="email" type={mode === "student" ? "text" : "email"} required value={email} onChange={(e) => setEmail(e.target.value)} placeholder={mode === "student" ? "Email / Student ID (e.g. SCHCBT0001)" : ""} autoCapitalize="none" className="h-12 text-base" />
       </div>
       <div className="space-y-1.5">

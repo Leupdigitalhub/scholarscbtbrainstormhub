@@ -19,6 +19,7 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExamsRouteImport } from './routes/_authenticated/exams'
 import { Route as AuthenticatedLeaderboardRouteImport } from './routes/_authenticated/leaderboard'
+import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
 import { Route as AuthenticatedPracticeRouteImport } from './routes/_authenticated/practice'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
 import { Route as AuthenticatedScienceRouteImport } from './routes/_authenticated/science'
@@ -91,6 +92,11 @@ const AuthenticatedLeaderboardRoute =
     path: '/leaderboard',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPracticeRoute = AuthenticatedPracticeRouteImport.update({
   id: '/practice',
   path: '/practice',
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exams': typeof AuthenticatedExamsRoute
   '/leaderboard': typeof AuthenticatedLeaderboardRoute
+  '/messages': typeof AuthenticatedMessagesRoute
   '/practice': typeof AuthenticatedPracticeRoute
   '/results': typeof AuthenticatedResultsRoute
   '/science': typeof AuthenticatedScienceRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exams': typeof AuthenticatedExamsRoute
   '/leaderboard': typeof AuthenticatedLeaderboardRoute
+  '/messages': typeof AuthenticatedMessagesRoute
   '/practice': typeof AuthenticatedPracticeRoute
   '/results': typeof AuthenticatedResultsRoute
   '/science': typeof AuthenticatedScienceRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exams': typeof AuthenticatedExamsRoute
   '/_authenticated/leaderboard': typeof AuthenticatedLeaderboardRoute
+  '/_authenticated/messages': typeof AuthenticatedMessagesRoute
   '/_authenticated/practice': typeof AuthenticatedPracticeRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
   '/_authenticated/science': typeof AuthenticatedScienceRoute
@@ -318,6 +327,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/leaderboard'
+    | '/messages'
     | '/practice'
     | '/results'
     | '/science'
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/leaderboard'
+    | '/messages'
     | '/practice'
     | '/results'
     | '/science'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/exams'
     | '/_authenticated/leaderboard'
+    | '/_authenticated/messages'
     | '/_authenticated/practice'
     | '/_authenticated/results'
     | '/_authenticated/science'
@@ -484,6 +496,13 @@ declare module '@tanstack/react-router' {
       path: '/leaderboard'
       fullPath: '/leaderboard'
       preLoaderRoute: typeof AuthenticatedLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages': {
+      id: '/_authenticated/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/practice': {
@@ -680,6 +699,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExamsRoute: typeof AuthenticatedExamsRoute
   AuthenticatedLeaderboardRoute: typeof AuthenticatedLeaderboardRoute
+  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRoute
   AuthenticatedPracticeRoute: typeof AuthenticatedPracticeRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
   AuthenticatedScienceRoute: typeof AuthenticatedScienceRoute
@@ -695,6 +715,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExamsRoute: AuthenticatedExamsRoute,
   AuthenticatedLeaderboardRoute: AuthenticatedLeaderboardRoute,
+  AuthenticatedMessagesRoute: AuthenticatedMessagesRoute,
   AuthenticatedPracticeRoute: AuthenticatedPracticeRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
   AuthenticatedScienceRoute: AuthenticatedScienceRoute,
