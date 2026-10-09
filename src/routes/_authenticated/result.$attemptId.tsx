@@ -71,7 +71,7 @@ function Result() {
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Candidate</p>
             <h1 className="mt-0.5 text-lg font-extrabold sm:text-xl">{me?.profile?.full_name}</h1>
-            <p className="text-sm text-muted-foreground">{[me?.profile?.class && `Class ${me.profile.class}`, me?.profile?.student_id && `Reg ${me.profile.student_id}`].filter(Boolean).join(" · ")}</p>
+            <p className="text-sm text-muted-foreground">{[me?.profile?.class && `Class ${me.profile.class}`, me?.profile?.student_id && `STUDENT ID ${me.profile.student_id}`].filter(Boolean).join(" · ")}</p>
             <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Examination</p>
             <p className="text-sm font-bold sm:text-base">{r.test_title}</p>
             {r.show_results && (

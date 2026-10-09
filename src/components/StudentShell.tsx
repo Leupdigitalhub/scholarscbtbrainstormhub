@@ -59,6 +59,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
         <div className="min-w-0 text-sm">
           <p className="truncate font-bold">{name}</p>
           <p className="truncate text-xs opacity-70">{me?.profile?.class || "Student"}</p>
+          {me?.profile?.student_id && <p className="truncate font-mono text-xs font-bold">ID: {me.profile.student_id}</p>}
         </div>
       </div>
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3">
