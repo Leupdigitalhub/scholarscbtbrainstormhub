@@ -5,6 +5,7 @@ import { useHydrated } from "@/lib/use-hydrated";
 import { toast } from "sonner";
 import { AuthCard } from "@/components/AuthCard";
 import { LoginForm } from "@/components/LoginForm";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -65,7 +66,7 @@ function Setup() {
       <form onSubmit={submit} className="space-y-4">
         <div className="space-y-1.5"><Label>Your name</Label><Input required value={f.name} onChange={(e) => setF((prev) => ({ ...prev, name: e.target.value }))} className="h-12" /></div>
         <div className="space-y-1.5"><Label>Email</Label><Input type="email" required value={f.email} onChange={(e) => setF((prev) => ({ ...prev, email: e.target.value }))} className="h-12" /></div>
-        <div className="space-y-1.5"><Label>Password</Label><Input type="password" minLength={8} required value={f.password} onChange={(e) => setF((prev) => ({ ...prev, password: e.target.value }))} className="h-12" /></div>
+        <div className="space-y-1.5"><Label>Password</Label><PasswordInput minLength={8} required value={f.password} onChange={(e) => setF((prev) => ({ ...prev, password: e.target.value }))} className="h-12" /></div>
         <Button disabled={busy || !hydrated} className="h-12 w-full">{busy ? "Creating..." : "Create administrator"}</Button>
       </form>
     </AuthCard>
