@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { GraduationCap, Laptop, LineChart, MousePointerClick, ShieldCheck, Zap } from "lucide-react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { getIsAdmin } from "@/lib/auth";
 import hall from "@/assets/cbt-hall.jpg";
 
 export const Route = createFileRoute("/")({
@@ -29,6 +32,14 @@ const features = [
 ];
 
 function Home() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return;
+      const admin = await getIsAdmin(data.session.user.id);
+      navigate({ to: admin ? "/admin" : "/dashboard", replace: true });
+    });
+  }, [navigate]);
   return (
     <main className="min-h-screen">
       <section className="relative overflow-hidden text-foreground">
