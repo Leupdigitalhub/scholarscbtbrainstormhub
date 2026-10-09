@@ -1,8 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAvatar, flushPendingAvatar } from "@/lib/avatar";
+import { supportTable } from "@/lib/support-messages";
 import {
-  Atom, BookOpen, Dumbbell, GraduationCap, LayoutDashboard, LogOut, Menu, PlayCircle, Settings, Trophy, X, FileBarChart,
+  Atom, BookOpen, Dumbbell, GraduationCap, LayoutDashboard, LogOut, Menu, PlayCircle, Settings, Trophy, X, FileBarChart, MessageCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { HallWatermark } from "@/components/HallWatermark";
@@ -17,6 +20,7 @@ const nav = [
   { to: "/syllabus", label: "Study Guide", icon: BookOpen },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { to: "/science", label: "Global Science", icon: Atom },
+  { to: "/messages", label: "Messages", icon: MessageCircle },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -32,6 +36,13 @@ export function StudentShell({ children }: { children: ReactNode }) {
     navigate({ to: "/login", replace: true });
   }
   const name = me?.profile?.full_name || "Student";
+  const uid = me?.user.id;
+  const avatar = useAvatar(uid);
+  useEffect(() => { if (uid) void flushPendingAvatar(uid, me?.user.email).then((ok) => { if (ok) void qc.invalidateQueries({ queryKey: ["avatar", uid] }); }); }, [uid, me?.user.email, qc]);
+  const unread = useQuery({
+    queryKey: ["support-unread", uid], enabled: !!uid, refetchInterval: 20000, retry: false,
+    queryFn: async () => ((await supportTable().select("id").eq("student_id", uid).eq("sender", "admin").eq("is_read", false)).data ?? []).length,
+  });
 
   const side = (
     <div className="flex h-full flex-col">
@@ -43,7 +54,8 @@ export function StudentShell({ children }: { children: ReactNode }) {
         </span>
       </Link>
       <div className="mx-4 mb-3 flex items-center gap-3 rounded-xl bg-sidebar-accent p-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent font-bold text-accent-foreground">{name.charAt(0).toUpperCase()}</span>
+        {avatar.data ? <img src={avatar.data} alt={name} className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-sidebar-primary" />
+          : <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent font-bold text-accent-foreground">{name.charAt(0).toUpperCase()}</span>}
         <div className="min-w-0 text-sm">
           <p className="truncate font-bold">{name}</p>
           <p className="truncate text-xs opacity-70">{me?.profile?.class || "Student"}</p>
@@ -55,6 +67,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold opacity-85 transition hover:bg-sidebar-accent hover:opacity-100"
             activeProps={{ className: "bg-sidebar-primary text-sidebar-primary-foreground opacity-100 hover:bg-sidebar-primary" }}>
             <n.icon className="h-4 w-4" />{n.label}
+            {n.to === "/messages" && (unread.data ?? 0) > 0 && <span className="ml-auto rounded-full bg-destructive px-1.5 text-xs text-destructive-foreground">{unread.data}</span>}
           </Link>
         ))}
       </nav>

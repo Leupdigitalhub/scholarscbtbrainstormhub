@@ -155,3 +155,4 @@
 }
 .exam-lock input, .exam-lock textarea { -webkit-user-select: text !important; user-select: text !important; }
 .exam-lock ::selection { background: transparent; }
+@keyframes spark-bar { from { width: 0% } to { width: 100% } }
