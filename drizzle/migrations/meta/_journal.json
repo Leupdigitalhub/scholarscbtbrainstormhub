@@ -99,6 +99,13 @@
       "when": 1791552403945,
       "tag": "0013_corrections_options_as_shown",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791574504562,
+      "tag": "0014_support_messages_and_avatars",
+      "breakpoints": true
     }
   ]
 }
