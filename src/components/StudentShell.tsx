@@ -38,6 +38,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
   async function signOut() {
     await qc.cancelQueries();
     qc.clear();
+    try { sessionStorage.removeItem("scholars-menu-guide-done"); } catch { /* storage unavailable */ }
     await supabase.auth.signOut();
     navigate({ to: "/login", replace: true });
   }

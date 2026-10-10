@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { StudentShell } from "@/components/StudentShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/lib/auth";
@@ -59,7 +60,7 @@ function Settings() {
         </div>
         <div className="space-y-4 rounded-2xl border bg-card p-6">
           <h2 className="font-bold">Change password</h2>
-          <div><Label>New password</Label><Input type="password" value={pw} onChange={(e) => setPw(e.target.value)} /></div>
+          <div><Label>New password</Label><PasswordInput value={pw} onChange={(e) => setPw(e.target.value)} /></div>
           <Button disabled={busy} onClick={savePw}>Update password</Button>
           <p className="text-sm text-muted-foreground">Class and STUDENT ID can only be changed by your school admin.</p>
         </div>

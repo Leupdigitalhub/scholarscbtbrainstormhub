@@ -182,16 +182,20 @@ const GUIDE_KEY = "scholars-menu-guide-done";
 
 function MenuGuide() {
   const [show, setShow] = useState(true);
+  const [fading, setFading] = useState(false);
   useEffect(() => {
-    try { if (localStorage.getItem(GUIDE_KEY) === "1") setShow(false); } catch { /* storage unavailable */ }
+    try { if (sessionStorage.getItem(GUIDE_KEY) === "1") { setShow(false); return; } } catch { /* storage unavailable */ }
+    const f = setTimeout(() => setFading(true), 9300);
+    const h = setTimeout(() => setShow(false), 10000);
+    return () => { clearTimeout(f); clearTimeout(h); };
   }, []);
   function dismiss() {
-    try { localStorage.setItem(GUIDE_KEY, "1"); } catch { /* storage unavailable */ }
+    try { sessionStorage.setItem(GUIDE_KEY, "1"); } catch { /* storage unavailable */ }
     setShow(false);
   }
   if (!show) return null;
   return (
-    <div className="mt-4 rounded-2xl border-2 border-dashed border-primary/60 bg-primary/5 p-5">
+    <div className={`mt-4 rounded-2xl border-2 border-dashed border-primary/60 bg-primary/5 p-5 transition-opacity duration-700 ${fading ? "opacity-0" : "opacity-100"}`}>
       <p className="flex items-center gap-2 font-display text-lg font-extrabold">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"><Menu className="h-4 w-4" /></span>
         Start here — everything you need is in the Menu
@@ -204,7 +208,7 @@ function MenuGuide() {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Button className="lg:hidden" onClick={() => { openStudentMenu(); dismiss(); }}><Menu className="h-4 w-4" />Open my Menu</Button>
         <Button variant="outline" onClick={dismiss}>Got it</Button>
-        <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted-foreground"><MousePointerClick className="h-4 w-4" />Tap once — this reminder won't show again</span>
+        <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted-foreground"><MousePointerClick className="h-4 w-4" />This reminder fades in 10 seconds</span>
       </div>
     </div>
   );
