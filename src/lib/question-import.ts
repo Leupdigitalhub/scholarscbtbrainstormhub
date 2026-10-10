@@ -1,3 +1,5 @@
+import { encodePassage } from "@/lib/passage";
+
 // Turns pasted or uploaded text into questions.
 //
 // Accepted shape (blank line between questions is optional):
@@ -61,7 +63,31 @@ function one(q: ParsedQ): string {
   return [q.text, opts, `Answer: ${q.correct_answer}`, q.explanation ? `Explanation: ${q.explanation}` : ""].filter(Boolean).join("\n");
 }
 
+// Comprehension passages: [PASSAGE] Title: ... text [/PASSAGE] — every question after it
+// belongs to that passage until the next [PASSAGE] or a line "[END PASSAGE]".
 export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: string[] } {
+  const re = /\[PASSAGE\]([\s\S]*?)\[\/PASSAGE\]|\[END PASSAGE\]/gi;
+  const out: ParsedQ[] = [];
+  const problems: string[] = [];
+  let last = 0; let cur: { title: string; body: string } | null = null; let m: RegExpExecArray | null;
+  const flush = (chunk: string) => {
+    const r = parsePlain(chunk);
+    problems.push(...r.problems);
+    for (const q of r.questions) out.push(cur ? { ...q, text: encodePassage(cur.title, cur.body, q.text) } : q);
+  };
+  while ((m = re.exec(raw))) {
+    flush(raw.slice(last, m.index));
+    last = m.index + m[0].length;
+    if (m[1] === undefined) { cur = null; continue; }
+    const lines = m[1].replace(/\r\n?/g, "\n").trim().split("\n");
+    const t = /^\s*title\s*[:\-–—]\s*(.*)$/i.exec(lines[0] ?? "");
+    cur = { title: t ? (t[1] ?? "").trim() : "", body: (t ? lines.slice(1) : lines).join("\n").trim() };
+  }
+  flush(raw.slice(last));
+  return { questions: out, problems };
+}
+
+function parsePlain(raw: string): { questions: ParsedQ[]; problems: string[] } {
   const questions: ParsedQ[] = [];
   const problems: string[] = [];
 
