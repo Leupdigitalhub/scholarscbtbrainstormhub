@@ -22,3 +22,9 @@ export function splitPassage(text: string): Split {
 
 /** Plain question text without the passage, for lists and search. */
 export const questionOnly = (text: string) => splitPassage(text).question;
+
+/** Question text with a short "[Passage: title]" tag, for admin lists and corrections. */
+export const passageLabel = (text: string) => {
+  const s = splitPassage(text);
+  return s.passage ? `[Passage${s.passage.title ? `: ${s.passage.title}` : ""}] ${s.question}` : s.question;
+};

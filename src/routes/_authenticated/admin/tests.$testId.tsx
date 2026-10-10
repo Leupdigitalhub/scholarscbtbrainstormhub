@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { passageLabel } from "@/lib/passage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -107,7 +108,7 @@ function EditTest() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-xs font-bold uppercase text-muted-foreground">Question {i + 1} · {typeLabel[q.type]} · {q.marks} mark(s)</p>
-                  <p className="mt-1 whitespace-pre-wrap font-bold">{q.text}</p>
+                  <p className="mt-1 whitespace-pre-wrap font-bold">{passageLabel(q.text)}</p>
                   {q.type === "mcq" && (
                     <p className="mt-1 text-sm">{(q.options as string[]).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("   ")}</p>
                   )}

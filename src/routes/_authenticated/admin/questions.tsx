@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { passageLabel } from "@/lib/passage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
@@ -65,7 +66,7 @@ function QuestionBank() {
         {rows.map((x, i) => (
           <div key={x.id} className="flex items-start justify-between gap-3 rounded-xl border bg-card p-4">
             <div className="text-sm">
-              <p className="font-bold">{i + 1}. {x.text}</p>
+              <p className="font-bold">{i + 1}. {passageLabel(x.text)}</p>
               {(x.options as string[]).length > 0 && <p>{(x.options as string[]).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("   ")}</p>}
               <p className="text-success">Answer: {x.correct_answer}</p>
               {x.explanation && <p className="whitespace-pre-line text-muted-foreground">Explanation: {x.explanation}</p>}
