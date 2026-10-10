@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, type ReactNode } from "react";
-import { Atom, BookOpen, CalendarClock, Clock, FileQuestion, GraduationCap, ShieldCheck, Sparkles, Trophy } from "lucide-react";
-import { StudentShell } from "@/components/StudentShell";
+import { useEffect, useState, type ReactNode } from "react";
+import { Atom, BookOpen, CalendarClock, Clock, FileQuestion, GraduationCap, Menu, MousePointerClick, ShieldCheck, Sparkles, Trophy } from "lucide-react";
+import { StudentShell, openStudentMenu } from "@/components/StudentShell";
 import { BrainSpark } from "@/components/BrainSpark";
 import { useAvatar } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,8 @@ function Dashboard() {
           <Stat n={submitted.length} l="Completed" />
         </div>
       </div>
+
+      <MenuGuide />
 
       <BrainSpark />
 
