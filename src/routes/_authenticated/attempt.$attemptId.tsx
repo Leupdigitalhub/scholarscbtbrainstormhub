@@ -16,6 +16,7 @@ import { Proctor, CameraMonitor, useProctor } from "@/components/Proctor";
 import { GiftCard } from "@/components/GiftCard";
 import { Calculator } from "@/components/Calculator";
 import { flushAdminEmails } from "@/lib/notify.functions";
+import { splitPassage } from "@/lib/passage";
 
 export const Route = createFileRoute("/_authenticated/attempt/$attemptId")({
   head: () => ({ meta: [{ title: "Taking Test — SCHOLARS CBT" }] }),
@@ -196,7 +197,15 @@ function Runner({ data }: { data: AttemptData }) {
                 <p className="rounded-full bg-primary/10 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-primary">{q.subject ? `${q.subject} · ` : ""}Question {idx + 1} of {qs.length}</p>
                 <p className="text-xs font-bold text-muted-foreground">{q.marks} mark{Number(q.marks) === 1 ? "" : "s"}</p>
               </div>
-              <h2 className="mt-3 whitespace-pre-wrap font-sans text-base font-bold leading-snug tracking-normal sm:text-xl">{q.text}</h2>
+              {(() => { const sp = splitPassage(q.text); return (<>
+                {sp.passage && (
+                  <details open className="mt-3 rounded-xl border-2 border-primary/30 bg-muted/40 p-3 lg:open">
+                    <summary className="cursor-pointer text-sm font-extrabold text-primary">📖 Read the passage{sp.passage.title ? ` — ${sp.passage.title}` : ""} and answer the question</summary>
+                    <div className="mt-2 max-h-[45vh] overflow-y-auto whitespace-pre-wrap pr-2 text-sm leading-relaxed sm:text-base">{sp.passage.body}</div>
+                  </details>
+                )}
+                <h2 className="mt-3 whitespace-pre-wrap font-sans text-base font-bold leading-snug tracking-normal sm:text-xl">{sp.question}</h2>
+              </>); })()}
               <div className={cn("mt-4 grid gap-2", (q.type === "mcq" || q.type === "true_false") && "sm:grid-cols-2")}>
                 {(q.type === "mcq" || q.type === "true_false") && opts.map((o, i) => {
                   const sel = answers[q.id] === o.value;
