@@ -204,7 +204,7 @@ function MenuGuide() {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Button className="lg:hidden" onClick={() => { openStudentMenu(); dismiss(); }}><Menu className="h-4 w-4" />Open my Menu</Button>
         <Button variant="outline" onClick={dismiss}>Got it</Button>
-        <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted-foreground"><MousePointerClick className="h-4 w-4" />Tap once, it stays open from now on</span>
+        <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted-foreground"><MousePointerClick className="h-4 w-4" />Tap once — this reminder won't show again</span>
       </div>
     </div>
   );
