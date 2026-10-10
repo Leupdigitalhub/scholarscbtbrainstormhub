@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { passageLabel } from "@/lib/passage";
 import { Check, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -48,7 +49,7 @@ export function Corrections({ attemptId }: { attemptId: string }) {
                 {ok === true && <span className="flex items-center gap-1 text-sm font-bold text-success"><Check className="h-4 w-4" />Correct</span>}
                 {ok === false && <span className="flex items-center gap-1 text-sm font-bold text-destructive"><X className="h-4 w-4" />{ans ? "Wrong" : "Skipped"}</span>}
               </div>
-              <p className="mt-1 whitespace-pre-wrap font-bold">{q.text}</p>
+              <p className="mt-1 whitespace-pre-wrap font-bold">{passageLabel(q.text)}</p>
               <p className="mt-2 text-sm"><span className="text-muted-foreground">Your answer: </span>{yours}</p>
               {q.type !== "written" && ok !== true && <p className="text-sm font-bold text-success">Correct answer: {right}</p>}
               {q.explanation && <p className="mt-2 whitespace-pre-wrap rounded-xl bg-primary/5 p-3 text-sm"><span className="font-bold text-primary">Explanation: </span>{q.explanation}</p>}
