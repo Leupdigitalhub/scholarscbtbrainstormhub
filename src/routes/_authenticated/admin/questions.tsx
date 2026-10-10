@@ -32,6 +32,14 @@ function QuestionBank() {
     refresh();
   }
 
+  async function clearSubject() {
+    const n = all.filter((x) => x.subject === sub).length;
+    if (!confirm(`Delete ALL ${n} ${sub} questions from the bank? This cannot be undone.`)) return;
+    const { error } = await supabase.from("bank_questions").delete().eq("subject", sub);
+    if (error) { alert(error.message); return; }
+    refresh();
+  }
+
   return (
     <div>
       <h1 className="text-3xl font-extrabold">Question Bank</h1>
@@ -47,7 +55,12 @@ function QuestionBank() {
       <div className="mt-4">
         <ImportQuestions key={sub} bank subject={sub} testId="" position={0} onDone={refresh} />
       </div>
-      <Input className="mt-4 max-w-xs" placeholder={`Search ${sub}...`} value={q} onChange={(e) => setQ(e.target.value)} />
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <Input className="max-w-xs" placeholder={`Search ${sub}...`} value={q} onChange={(e) => setQ(e.target.value)} />
+        <Button variant="destructive" disabled={!all.some((x) => x.subject === sub)} onClick={clearSubject}>
+          <Trash2 className="mr-2 h-4 w-4" />Delete all {sub} questions
+        </Button>
+      </div>
       <div className="mt-3 space-y-2">
         {rows.map((x, i) => (
           <div key={x.id} className="flex items-start justify-between gap-3 rounded-xl border bg-card p-4">
