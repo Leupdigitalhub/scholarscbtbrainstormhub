@@ -7,8 +7,11 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { HallWatermark } from "@/components/HallWatermark";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  ssr: false,
   beforeLoad: async ({ context }) => {
-    const ok = await getIsAdmin(context.user.id);
+    const uid = (context as { user?: { id?: string } })?.user?.id ?? (await supabase.auth.getUser()).data.user?.id;
+    if (!uid) throw redirect({ to: "/staff" });
+    const ok = await getIsAdmin(uid).catch(() => false);
     if (!ok) throw redirect({ to: "/dashboard" });
   },
   head: () => ({ meta: [{ title: "Admin — SCHOLARS CBT" }, { name: "robots", content: "noindex" }] }),

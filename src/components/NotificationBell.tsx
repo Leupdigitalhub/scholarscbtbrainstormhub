@@ -59,7 +59,7 @@ export function NotificationBell() {
         <div className="max-h-96 overflow-y-auto">
           {items.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No activity yet.</p> : items.map((n) => (
             <Link key={n.id} to={n.kind === "submitted" && n.attempt_id ? "/admin/results/$attemptId" : n.kind === "login" ? "/admin/activity" : "/admin/live"}
-              params={{ attemptId: n.attempt_id ?? "" }} onClick={() => setOpen(false)}
+              params={(n.kind === "submitted" && n.attempt_id ? { attemptId: n.attempt_id } : {}) as never} onClick={() => setOpen(false)}
               className={cn("block border-b p-3 text-sm hover:bg-muted", !n.is_read && "bg-primary/5")}>
               <p className={cn("font-bold", (n.kind === "tab_switch" || n.kind === "camera_off") && "text-destructive")}>{n.title}</p>
               {n.body && <p className="text-muted-foreground">{n.body.replace(/\s*·?\s*id:[0-9a-f-]+$/, "")}</p>}
