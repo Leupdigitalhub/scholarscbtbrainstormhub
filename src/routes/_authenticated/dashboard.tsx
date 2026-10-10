@@ -177,3 +177,35 @@ function TestCard({ t, children }: { t: T; children: ReactNode }) {
 function Stat({ n, l }: { n: number; l: string }) {
   return <div className="border-r p-3 last:border-r-0"><p className="font-display text-2xl font-extrabold text-primary">{n}</p><p className="text-xs font-bold uppercase text-muted-foreground">{l}</p></div>;
 }
+
+const GUIDE_KEY = "scholars-menu-guide-done";
+
+function MenuGuide() {
+  const [show, setShow] = useState(true);
+  useEffect(() => {
+    try { if (localStorage.getItem(GUIDE_KEY) === "1") setShow(false); } catch { /* storage unavailable */ }
+  }, []);
+  function dismiss() {
+    try { localStorage.setItem(GUIDE_KEY, "1"); } catch { /* storage unavailable */ }
+    setShow(false);
+  }
+  if (!show) return null;
+  return (
+    <div className="mt-4 rounded-2xl border-2 border-dashed border-primary/60 bg-primary/5 p-5">
+      <p className="flex items-center gap-2 font-display text-lg font-extrabold">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"><Menu className="h-4 w-4" /></span>
+        Start here — everything you need is in the Menu
+      </p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        On a phone, tap <b className="text-foreground">Menu</b> just under the SCHOLARS CBT logo. On a computer, the list sits
+        on your left. That is where you will find <b className="text-foreground">Practice</b>, <b className="text-foreground">Study Guide</b>,
+        <b className="text-foreground"> Global Science</b>, <b className="text-foreground">Leaderboard</b> and <b className="text-foreground">Messages</b>.
+      </p>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Button className="lg:hidden" onClick={() => { openStudentMenu(); dismiss(); }}><Menu className="h-4 w-4" />Open my Menu</Button>
+        <Button variant="outline" onClick={dismiss}>Got it</Button>
+        <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted-foreground"><MousePointerClick className="h-4 w-4" />Tap once, it stays open from now on</span>
+      </div>
+    </div>
+  );
+}
