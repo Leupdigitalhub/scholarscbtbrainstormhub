@@ -8,6 +8,7 @@ import {
   Atom, BookOpen, Dumbbell, GraduationCap, LayoutDashboard, LogOut, Menu, PlayCircle, Settings, Trophy, X, FileBarChart, MessageCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell } from "@/components/Announcements";
 import { HallWatermark } from "@/components/HallWatermark";
 import { useMe } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -85,7 +86,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
 
       <header className="sticky top-0 z-20 flex items-center justify-between bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
         <Link to="/dashboard" className="flex items-center gap-2.5 font-display text-lg font-extrabold"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-accent"><GraduationCap className="h-5 w-5" /></span>SCHOLARS CBT</Link>
-        <button aria-label="Open menu" onClick={() => setOpen(true)} className="rounded-lg p-2 hover:bg-sidebar-accent"><Menu className="h-5 w-5" /></button>
+        <div className="flex items-center gap-1"><NotificationBell /><button aria-label="Open menu" onClick={() => setOpen(true)} className="rounded-lg p-2 hover:bg-sidebar-accent"><Menu className="h-5 w-5" /></button></div>
       </header>
       <div className={cn("fixed inset-0 z-30 lg:hidden", open ? "" : "pointer-events-none")}>
         <div className={cn("absolute inset-0 bg-foreground/40 transition-opacity", open ? "opacity-100" : "opacity-0")} onClick={() => setOpen(false)} />
@@ -95,7 +96,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
         </aside>
       </div>
 
-      <main className="relative z-10 mx-auto w-full max-w-5xl min-w-0 flex-1 px-4 py-6 lg:px-8">{children}</main>
+      <main className="relative z-10 mx-auto w-full max-w-5xl min-w-0 flex-1 px-4 py-6 lg:px-8"><div className="mb-2 hidden justify-end lg:flex"><NotificationBell /></div>{children}</main>
     </div>
   );
 }

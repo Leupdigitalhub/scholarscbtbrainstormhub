@@ -12,6 +12,7 @@ import { useLists } from "@/lib/auth";
 import { ChatThread } from "@/components/ChatThread";
 import { loadThread } from "@/lib/support-messages";
 import { cn } from "@/lib/utils";
+import { REPLY_TAG, parseNotice } from "@/components/Announcements";
 
 function Inbox({ names }: { names: Map<string, string> }) {
   const [open, setOpen] = useState<string | null>(null);
@@ -52,7 +53,7 @@ function Messages() {
   const { data: lists } = useLists();
   const students = useQuery({ queryKey: ["msg-students"], queryFn: async () => (await supabase.from("profiles").select("id,full_name,class").order("full_name")).data ?? [] });
   const list = useQuery({ queryKey: ["announcements"], queryFn: async () => (await supabase.from("announcements").select("*").order("created_at", { ascending: false })).data ?? [] });
-  const [f, setF] = useState({ title: "", body: "", target: "all", value: "" });
+  const [f, setF] = useState({ title: "", body: "", target: "all", value: "", reply: false });
   const [busy, setBusy] = useState(false);
   const names = new Map((students.data ?? []).map((s) => [s.id, s.full_name]));
 
@@ -61,14 +62,14 @@ function Messages() {
     if (f.target !== "all" && !f.value) { toast.error("Choose who should get this message"); return; }
     setBusy(true);
     const { error } = await supabase.from("announcements").insert({
-      title: f.title.trim(), body: f.body.trim(),
+      title: (f.reply ? REPLY_TAG : "") + f.title.trim(), body: f.body.trim(),
       target_class: f.target === "class" ? f.value : "",
       target_student: f.target === "student" ? f.value : null,
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Message sent");
-    setF({ title: "", body: "", target: "all", value: "" });
+    setF({ title: "", body: "", target: "all", value: "", reply: false });
     void qc.invalidateQueries({ queryKey: ["announcements"] });
   }
   async function remove(id: string) {
@@ -82,7 +83,7 @@ function Messages() {
       <p className="text-sm text-muted-foreground">Private messages from students. Tap one to reply.</p>
       <Inbox names={new Map((students.data ?? []).map((s) => [s.id, s.full_name ?? ""]))} />
       <h1 className="mt-10 text-2xl font-extrabold">Messages to Students</h1>
-      <p className="text-sm text-muted-foreground">Students see these instantly at the top of their dashboard.</p>
+      <p className="text-sm text-muted-foreground">Students see these in their notification bell.</p>
       <form onSubmit={send} className="mt-5 space-y-4 rounded-2xl border bg-card p-5">
         <div className="space-y-1.5"><Label>Title</Label><Input required value={f.title} onChange={(e) => setF((p) => ({ ...p, title: e.target.value }))} placeholder="e.g. Mock exam on Friday" /></div>
         <div className="space-y-1.5"><Label>Message</Label><Textarea rows={4} value={f.body} onChange={(e) => setF((p) => ({ ...p, body: e.target.value }))} /></div>
@@ -101,6 +102,7 @@ function Messages() {
               <option value="">Choose...</option>{(students.data ?? []).map((s) => <option key={s.id} value={s.id}>{s.full_name || "Unnamed"}{s.class ? ` (${s.class})` : ""}</option>)}
             </select></div>}
         </div>
+        <div className="flex gap-2">{[{ v: false, l: "Notice — no reply needed" }, { v: true, l: "Ask for their reply" }].map((o) => <Button key={o.l} type="button" variant={f.reply === o.v ? "default" : "outline"} size="sm" onClick={() => setF((p) => ({ ...p, reply: o.v }))}>{o.l}</Button>)}</div>
         <Button disabled={busy}>{busy ? "Sending..." : "Send message"}</Button>
       </form>
       <h2 className="mt-8 text-lg font-bold">Sent messages</h2>
@@ -109,7 +111,7 @@ function Messages() {
         {(list.data ?? []).map((a) => (
           <div key={a.id} className="flex items-start justify-between gap-3 rounded-xl border bg-card p-4">
             <div>
-              <p className="font-bold">{a.title}</p>
+              <p className="font-bold">{parseNotice(a.title).title} <span className="ml-1 rounded bg-muted px-1.5 text-xs font-normal">{parseNotice(a.title).reply ? "Reply requested" : "No reply"}</span></p>
               {a.body && <p className="whitespace-pre-wrap text-sm">{a.body}</p>}
               <p className="mt-1 text-xs text-muted-foreground">
                 To {a.target_student ? names.get(a.target_student) ?? "one student" : a.target_class || "all students"} · {new Date(a.created_at).toLocaleString()}
