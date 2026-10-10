@@ -569,6 +569,7 @@ export type Database = {
       }
       admin_reset_attempt: { Args: { _attempt_id: string }; Returns: undefined }
       attempt_gift_message: { Args: { _attempt_id: string }; Returns: string }
+      attempt_subject_scores: { Args: { _attempt_id: string }; Returns: Json }
       build_delivery: { Args: { _attempt_id: string }; Returns: Json }
       claim_admin: { Args: never; Returns: boolean }
       email_for_student_id: { Args: { _sid: string }; Returns: string }
