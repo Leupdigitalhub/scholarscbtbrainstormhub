@@ -96,7 +96,7 @@ export function TestForm({ initial, onSubmit, submitLabel, questionCount }: { in
         {v.multi_subject && (
           <F label="Questions per choice subject">
             <Input type="number" min={1} value={v.per_subject_count} onChange={up("per_subject_count")} className="max-w-40" />
-            <p className="text-sm text-muted-foreground">English: {(Number(v.per_subject_count) || 0) + 10} questions · Choice subjects: {Number(v.per_subject_count) || 0} each · Total: {(Number(v.per_subject_count) || 0) * 4 + 10} questions.</p>
+            {(() => { const n = Number(v.per_subject_count) || 0; const e = n + Math.min(n, 20); return <p className="text-sm text-muted-foreground">English: {e} questions · 3 Choice subjects: {n} each · Total: {e + n * 3} questions · Marked JAMB style over 400.</p>; })()}
           </F>
         )}
       </div>
