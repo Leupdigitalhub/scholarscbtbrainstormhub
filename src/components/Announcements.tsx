@@ -25,7 +25,7 @@ export function NotificationBell() {
     queryFn: async () => (await supabase.from("announcements").select("*").order("created_at", { ascending: false }).limit(30)).data ?? [],
   });
   useEffect(() => {
-    const ch = supabase.channel("student-announcements")
+    const ch = supabase.channel(`student-announcements-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "announcements" }, (p) => {
         if (p.eventType === "INSERT") toast.info("You have a new notification");
         void qc.invalidateQueries({ queryKey: ["my-announcements"] });
