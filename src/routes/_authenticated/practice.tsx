@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useSubjects } from "@/lib/subjects";
 
 export const Route = createFileRoute("/_authenticated/practice")({
   head: () => ({ meta: [{ title: "Practice — SCHOLARS CBT" }, { name: "description", content: "Pick one or more subjects, number of questions and time, then practise shuffled questions from the question bank." }] }),
@@ -23,7 +24,7 @@ function Practice() {
       const { data } = await supabase.from("bank_questions").select("subject").eq("type", "mcq").limit(20000);
       const m = new Map<string, number>();
       for (const r of data ?? []) m.set(r.subject, (m.get(r.subject) ?? 0) + 1);
-      return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+      return m;
     },
   });
   const [subs, setSubs] = useState<string[]>([]);
@@ -53,7 +54,8 @@ function Practice() {
     setBusy(false);
     setRows(all); setI(0); setPick(null); setRight(0); setDone(false); setLeft(mins * 60);
   }
-  const counts = bank.data ?? [];
+  const allSubs = useSubjects();
+  const counts: [string, number][] = allSubs.map((s) => [s, bank.data?.get(s) ?? 0]);
   const toggle = (s: string) => setSubs((p) => (p.includes(s) ? p.filter((x) => x !== s) : [...p, s]));
 
   if (!rows) return (

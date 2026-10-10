@@ -8,12 +8,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchAll } from "@/lib/admin-data";
+import { useSubjects } from "@/lib/subjects";
 
-export const BANK_TABS = ["English", "Mathematics", "Physics", "Chemistry", "Biology"];
+export const DEFAULT_BANK_TABS = ["English", "Mathematics", "Physics", "Chemistry", "Biology"];
 
 export function BankPicker({ testId, position, subject = "", onDone }: { testId: string; position: number; subject?: string; onDone: () => void }) {
   const [open, setOpen] = useState(false);
-  const [sub, setSub] = useState(BANK_TABS.includes(subject) ? subject : "English");
+  const BANK_TABS = useSubjects();
+  const [sub, setSub] = useState(subject || "English");
   const [q, setQ] = useState("");
   const [picked, setPicked] = useState<Record<string, { id: string; text: string; subject: string }>>({});
   const [busy, setBusy] = useState(false);

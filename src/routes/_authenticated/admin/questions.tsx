@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchAll } from "@/lib/admin-data";
 import { ImportQuestions } from "@/components/ImportQuestions";
-import { BANK_TABS } from "@/components/BankPicker";
+import { useSubjects } from "@/lib/subjects";
 
 export const Route = createFileRoute("/_authenticated/admin/questions")({
   head: () => ({ meta: [{ title: "Question Bank — Scholars CBT" }] }),
@@ -17,7 +17,9 @@ export const Route = createFileRoute("/_authenticated/admin/questions")({
 
 function QuestionBank() {
   const qc = useQueryClient();
-  const [sub, setSub] = useState("English");
+  const BANK_TABS = useSubjects();
+  const [sel, setSub] = useState("");
+  const sub = sel || BANK_TABS[0] || "English";
   const [q, setQ] = useState("");
   const { data } = useQuery({
     queryKey: ["bank-questions"],
