@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, type ReactNode } from "react";
 import { BookOpen, CalendarClock, Clock, FileQuestion, GraduationCap, ShieldCheck } from "lucide-react";
 import { StudentShell } from "@/components/StudentShell";
-import { Announcements } from "@/components/Announcements";
 import { BrainSpark } from "@/components/BrainSpark";
 import { useAvatar } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
@@ -78,7 +77,6 @@ function Dashboard() {
         </div>
       </div>
 
-      <Announcements />
 
       <div className="mt-2 grid gap-6 lg:grid-cols-[1fr_300px]">
         <div>
