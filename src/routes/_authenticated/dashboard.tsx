@@ -185,8 +185,8 @@ function MenuGuide() {
   const [fading, setFading] = useState(false);
   useEffect(() => {
     try { if (sessionStorage.getItem(GUIDE_KEY) === "1") { setShow(false); return; } } catch { /* storage unavailable */ }
-    const f = setTimeout(() => setFading(true), 9300);
-    const h = setTimeout(() => setShow(false), 10000);
+    const f = setTimeout(() => setFading(true), 59300);
+    const h = setTimeout(() => setShow(false), 60000);
     return () => { clearTimeout(f); clearTimeout(h); };
   }, []);
   function dismiss() {
@@ -208,7 +208,7 @@ function MenuGuide() {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Button className="lg:hidden" onClick={() => { openStudentMenu(); dismiss(); }}><Menu className="h-4 w-4" />Open my Menu</Button>
         <Button variant="outline" onClick={dismiss}>Got it</Button>
-        <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted-foreground"><MousePointerClick className="h-4 w-4" />This reminder fades in 10 seconds</span>
+        <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted-foreground"><MousePointerClick className="h-4 w-4" />This reminder fades in 1 minute</span>
       </div>
     </div>
   );
