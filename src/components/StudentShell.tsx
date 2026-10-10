@@ -85,8 +85,10 @@ export function StudentShell({ children }: { children: ReactNode }) {
       <aside className="relative z-20 hidden bg-sidebar text-sidebar-foreground lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:shrink-0">{side}</aside>
 
       <header className="sticky top-0 z-20 flex items-center justify-between bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
-        <div className="flex items-center gap-1"><button aria-label="Open menu" onClick={() => setOpen(true)} className="rounded-lg p-2 hover:bg-sidebar-accent"><Menu className="h-5 w-5" /></button>
-        <Link to="/dashboard" className="flex items-center gap-2.5 font-display text-lg font-extrabold"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-accent"><GraduationCap className="h-5 w-5" /></span>SCHOLARS CBT</Link></div>
+        <div className="flex flex-col items-start gap-1">
+          <Link to="/dashboard" className="flex items-center gap-2.5 font-display text-lg font-extrabold"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-accent"><GraduationCap className="h-5 w-5" /></span>SCHOLARS CBT</Link>
+          <button aria-label="Open menu" onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-lg px-2 py-1 text-xs font-bold uppercase tracking-wider hover:bg-sidebar-accent"><Menu className="h-4 w-4" />Menu</button>
+        </div>
         <NotificationBell />
       </header>
       <div className={cn("fixed inset-0 z-30 lg:hidden", open ? "" : "pointer-events-none")}>
