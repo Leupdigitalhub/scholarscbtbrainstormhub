@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, type ReactNode } from "react";
-import { BookOpen, CalendarClock, Clock, FileQuestion, GraduationCap, ShieldCheck } from "lucide-react";
+import { Atom, BookOpen, CalendarClock, Clock, FileQuestion, GraduationCap, ShieldCheck, Sparkles, Trophy } from "lucide-react";
 import { StudentShell } from "@/components/StudentShell";
 import { BrainSpark } from "@/components/BrainSpark";
 import { useAvatar } from "@/lib/avatar";
@@ -100,6 +100,19 @@ function Dashboard() {
         </div>
 
         <aside className="space-y-4 lg:pt-8">
+          <div className="rounded-2xl border bg-card p-4">
+            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground"><Sparkles className="h-4 w-4 text-primary" />Don't miss these</p>
+            <Link to="/science" className="mt-3 block overflow-hidden rounded-xl bg-primary p-4 text-primary-foreground transition hover:opacity-90">
+              <p className="flex items-center gap-2 font-display text-lg font-extrabold"><Atom className="h-6 w-6 animate-[spin_8s_linear_infinite]" />Global Science</p>
+              <p className="mt-1 text-sm opacity-90">Discover amazing science facts from around the world — new wonders every day!</p>
+              <p className="mt-2 text-sm font-bold underline">Explore now →</p>
+            </Link>
+            <Link to="/leaderboard" className="mt-3 block overflow-hidden rounded-xl bg-accent p-4 text-accent-foreground transition hover:opacity-90">
+              <p className="flex items-center gap-2 font-display text-lg font-extrabold"><Trophy className="h-6 w-6" />Leaderboard</p>
+              <p className="mt-1 text-sm opacity-90">See the top scholars in your school. Can you climb to #1?</p>
+              <p className="mt-2 text-sm font-bold underline">Check your rank →</p>
+            </Link>
+          </div>
           <Link to="/syllabus" className="block overflow-hidden rounded-2xl border bg-card p-4 transition hover:bg-muted">
             <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=70" alt="Books and study" loading="lazy" className="-mx-4 -mt-4 mb-3 h-28 w-[calc(100%+2rem)] max-w-none object-cover" />
             <p className="flex items-center gap-2 font-bold"><BookOpen className="h-5 w-5 text-primary" />SS1–SS3 Study Topics</p>
