@@ -25,6 +25,11 @@ const nav = [
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
+/** Opens the student side menu from anywhere (e.g. the dashboard guide). */
+export function openStudentMenu() {
+  window.dispatchEvent(new Event("scholars:open-menu"));
+}
+
 export function StudentShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -40,6 +45,11 @@ export function StudentShell({ children }: { children: ReactNode }) {
   const uid = me?.user.id;
   const avatar = useAvatar(uid);
   useEffect(() => { if (uid) void flushPendingAvatar(uid, me?.user.email).then((ok) => { if (ok) void qc.invalidateQueries({ queryKey: ["avatar", uid] }); }); }, [uid, me?.user.email, qc]);
+  useEffect(() => {
+    const open = () => setOpen(true);
+    window.addEventListener("scholars:open-menu", open);
+    return () => window.removeEventListener("scholars:open-menu", open);
+  }, []);
   const unread = useQuery({
     queryKey: ["support-unread", uid], enabled: !!uid, refetchInterval: 20000, retry: false,
     queryFn: async () => ((await supportTable().select("id").eq("student_id", uid).eq("sender", "admin").eq("is_read", false)).data ?? []).length,
@@ -87,7 +97,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-20 flex items-center justify-between bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
         <div className="flex flex-col items-start gap-1">
           <Link to="/dashboard" className="flex items-center gap-2.5 font-display text-lg font-extrabold"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-accent"><GraduationCap className="h-5 w-5" /></span>SCHOLARS CBT</Link>
-          <button aria-label="Open menu" onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-lg px-2 py-1 text-xs font-bold uppercase tracking-wider hover:bg-sidebar-accent"><Menu className="h-4 w-4" />Menu</button>
+          <button aria-label="Open menu" onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-lg px-2 py-1 text-xs font-bold uppercase tracking-wider hover:bg-sidebar-accent"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" /></span><Menu className="h-4 w-4" />Menu</button>
         </div>
         <NotificationBell />
       </header>
