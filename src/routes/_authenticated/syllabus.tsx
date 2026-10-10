@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
 import { StudentShell } from "@/components/StudentShell";
 import { supabase } from "@/integrations/supabase/client";
+import { useSubjects } from "@/lib/subjects";
 
 export const Route = createFileRoute("/_authenticated/syllabus")({
   head: () => ({ meta: [{ title: "Study Topics SS1–SS3 — SCHOLARS CBT" }, { name: "description", content: "Your SS1 to SS3 study topics and progress." }] }),
@@ -11,13 +12,14 @@ export const Route = createFileRoute("/_authenticated/syllabus")({
 });
 
 const CLASSES = ["SS 1", "SS 2", "SS 3"];
-const SUBJECTS = ["English", "Mathematics", "Physics", "Chemistry", "Biology"];
 const TERMS = ["1st Term", "2nd Term", "3rd Term"];
 
 function Syllabus() {
   const qc = useQueryClient();
   const [cls, setCls] = useState("SS 1");
-  const [sub, setSub] = useState("English");
+  const SUBJECTS = useSubjects();
+  const [sel, setSub] = useState("");
+  const sub = sel || SUBJECTS[0] || "English";
   const topics = useQuery({ queryKey: ["topics"], queryFn: async () => (await supabase.from("study_topics").select("*").order("topic_order")).data ?? [] });
   const done = useQuery({ queryKey: ["topic-progress"], queryFn: async () => new Set(((await supabase.from("student_topic_progress").select("topic_id")).data ?? []).map((r) => r.topic_id)) });
   const list = (topics.data ?? []).filter((t) => t.class_name === cls && t.subject_name === sub);
@@ -40,6 +42,7 @@ function Syllabus() {
       <div className="mt-4 flex flex-wrap gap-2">{CLASSES.map((c) => <button key={c} className={pill(c === cls)} onClick={() => setCls(c)}>{c}</button>)}</div>
       <div className="mt-3 flex flex-wrap gap-2">{SUBJECTS.map((s) => <button key={s} className={pill(s === sub)} onClick={() => setSub(s)}>{s}</button>)}</div>
       <div className="mt-5 rounded-2xl border bg-card p-4">
+        {!list.length && <p className="mb-2 text-sm text-muted-foreground">Topics for {sub} in {cls} are coming soon.</p>}
         <p className="text-sm font-bold">{count} of {list.length} topics studied · {percent}%</p>
         <div className="mt-2 h-3 rounded-full bg-muted"><div className="h-3 rounded-full bg-success" style={{ width: `${percent}%` }} /></div>
       </div>
