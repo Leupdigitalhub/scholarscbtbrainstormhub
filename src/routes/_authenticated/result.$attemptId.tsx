@@ -44,6 +44,12 @@ function Result() {
     queryKey: ["my-corrections", attemptId],
     queryFn: async () => ((await supabase.rpc("my_corrections", { _attempt_id: attemptId })).data ?? null) as CorrectionRow[] | null,
   });
+  const subj = useQuery({
+    queryKey: ["subject-scores", attemptId],
+    queryFn: async () => ((await supabase.rpc("attempt_subject_scores", { _attempt_id: attemptId })).data ?? []) as { subject: string; right: number; total: number }[],
+  });
+  const jamb = (subj.data ?? []).map((s) => ({ subject: s.subject, score: Math.round((s.right / Math.max(1, s.total)) * 100) }));
+  const jambTotal = jamb.reduce((a, s) => a + s.score, 0);
   const r = data?.find((x) => x.attempt_id === attemptId);
   if (isLoading) return <StudentShell><p>Loading...</p></StudentShell>;
   if (!r) return <StudentShell><p>Result not found.</p></StudentShell>;
@@ -92,6 +98,15 @@ function Result() {
           <p className="mx-6 mb-6 rounded-xl bg-muted p-5 text-center">Your test has been submitted. Your teacher will release the results soon.</p>
         ) : (
           <div className="space-y-3 px-4 pb-4 sm:px-5">
+            {jamb.length >= 2 && (
+              <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-3">
+                <p className="text-xs font-extrabold uppercase tracking-wide">JAMB Style Score</p>
+                <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+                  {jamb.map((s) => <div key={s.subject} className="rounded-lg bg-card p-2 text-center"><p className="text-[11px] font-bold text-muted-foreground">{s.subject}</p><p className="font-display text-lg font-extrabold">{s.score}<span className="text-xs text-muted-foreground">/100</span></p></div>)}
+                </div>
+                <p className="mt-2 text-center font-display text-2xl font-extrabold">{jambTotal}<span className="text-base text-muted-foreground">/{jamb.length * 100}</span> <span className="text-base">· {Math.round((jambTotal / (jamb.length * 100)) * 1000) / 10}%</span></p>
+              </div>
+            )}
             <div className="grid grid-cols-3 gap-2">
               <Chip icon={CheckCircle2} n={r.correct_count} l="Correct" c="bg-success/15 text-success" />
               <Chip icon={XCircle} n={r.wrong_count} l="Wrong" c="bg-destructive/10 text-destructive" />
