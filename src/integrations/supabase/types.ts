@@ -620,6 +620,10 @@ export type Database = {
           wrong_count: number
         }[]
       }
+      pick_questions: {
+        Args: { _n: number; _shuffle: boolean; _subj: string; _test: string }
+        Returns: string[]
+      }
       recalc_attempt: { Args: { _attempt_id: string }; Returns: undefined }
       save_answers: {
         Args: { _answers: Json; _attempt_id: string }
