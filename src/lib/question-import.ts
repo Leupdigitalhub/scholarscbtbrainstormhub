@@ -66,6 +66,11 @@ function one(q: ParsedQ): string {
 // Comprehension passages: [PASSAGE] Title: ... text [/PASSAGE] — every question after it
 // belongs to that passage until the next [PASSAGE] or a line "[END PASSAGE]".
 export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: string[] } {
+  // Summary/cloze format: [SUMMARY] or [PASSAGE] ... [SUMMARY QUESTION(S)] ... [/SUMMARY]
+  raw = raw
+    .replace(/\[(SUMMARY|CLOZE)\]/gi, (_m, k) => `[PASSAGE]\u2063${k.toUpperCase()}\u2063`)
+    .replace(/\[(SUMMARY|PASSAGE|CLOZE)\s+QUESTIONS?\]/gi, "[/PASSAGE]")
+    .replace(/\[\/(SUMMARY|CLOZE)\]/gi, "[END PASSAGE]");
   const re = /\[PASSAGE\]([\s\S]*?)\[\/PASSAGE\]|\[END PASSAGE\]/gi;
   const out: ParsedQ[] = [];
   const problems: string[] = [];
@@ -79,9 +84,14 @@ export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: s
     flush(raw.slice(last, m.index));
     last = m.index + m[0].length;
     if (m[1] === undefined) { cur = null; continue; }
-    const lines = m[1].replace(/\r\n?/g, "\n").trim().split("\n");
+    let inner = m[1]; let tag = "";
+    const tm = /^\u2063(\w+)\u2063/.exec(inner);
+    if (tm) { tag = tm[1] === "CLOZE" ? "Cloze" : "Summary"; inner = inner.slice(tm[0].length); }
+    const lines = inner.replace(/\r\n?/g, "\n").trim().split("\n");
     const t = /^\s*title\s*[:\-–—]\s*(.*)$/i.exec(lines[0] ?? "");
-    cur = { title: t ? (t[1] ?? "").trim() : "", body: (t ? lines.slice(1) : lines).join("\n").trim() };
+    let title = t ? (t[1] ?? "").trim() : "";
+    if (tag && !/summary|cloze/i.test(title)) title = title ? `${tag}: ${title}` : tag;
+    cur = { title, body: (t ? lines.slice(1) : lines).join("\n").trim() };
   }
   flush(raw.slice(last));
   return { questions: out, problems };
