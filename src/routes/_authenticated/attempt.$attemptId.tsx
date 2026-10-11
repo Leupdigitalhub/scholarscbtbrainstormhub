@@ -16,7 +16,7 @@ import { Proctor, CameraMonitor, useProctor } from "@/components/Proctor";
 import { GiftCard } from "@/components/GiftCard";
 import { Calculator } from "@/components/Calculator";
 import { flushAdminEmails } from "@/lib/notify.functions";
-import { splitPassage } from "@/lib/passage";
+import { splitPassage, passageKind } from "@/lib/passage";
 
 export const Route = createFileRoute("/_authenticated/attempt/$attemptId")({
   head: () => ({ meta: [{ title: "Taking Test — SCHOLARS CBT" }] }),
@@ -200,7 +200,7 @@ function Runner({ data }: { data: AttemptData }) {
               {(() => { const sp = splitPassage(q.text); return (<>
                 {sp.passage && (
                   <details open className="mt-3 rounded-xl border-2 border-primary/30 bg-muted/40 p-3 lg:open">
-                    <summary className="cursor-pointer text-sm font-extrabold text-primary">📖 Read the passage{sp.passage.title ? ` — ${sp.passage.title}` : ""} and answer the question</summary>
+                    <summary className="cursor-pointer text-sm font-extrabold text-primary">📖 Read the {passageKind(sp.passage.title).toLowerCase()}{sp.passage.title ? ` — ${sp.passage.title}` : ""} and answer the question</summary>
                     <div className="mt-2 max-h-[45vh] overflow-y-auto whitespace-pre-wrap pr-2 text-sm leading-relaxed sm:text-base">{sp.passage.body}</div>
                   </details>
                 )}
