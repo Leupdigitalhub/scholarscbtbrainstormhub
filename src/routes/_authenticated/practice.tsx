@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { useSubjects } from "@/lib/subjects";
+import { splitPassage, passageKind } from "@/lib/passage";
 
 export const Route = createFileRoute("/_authenticated/practice")({
   head: () => ({ meta: [{ title: "Practice — SCHOLARS CBT" }, { name: "description", content: "Pick one or more subjects, number of questions and time, then practise shuffled questions from the question bank." }] }),
@@ -104,7 +105,15 @@ function Practice() {
           {mins > 0 && <span className="flex items-center gap-1"><Clock className="h-4 w-4" />{Math.floor(left / 60)}:{String(left % 60).padStart(2, "0")}</span>}
           <span>Score: {right}</span>
         </div>
-        <p className="mt-4 whitespace-pre-wrap text-lg font-bold">{q.text}</p>
+        {(() => { const sp = splitPassage(q.text); return (<>
+          {sp.passage && (
+            <details open className="mt-4 rounded-xl border-2 border-primary/30 bg-muted/40 p-3">
+              <summary className="cursor-pointer text-sm font-extrabold text-primary">📖 Read the {passageKind(sp.passage.title).toLowerCase()}{sp.passage.title ? ` — ${sp.passage.title}` : ""}</summary>
+              <div className="mt-2 max-h-[45vh] overflow-y-auto whitespace-pre-wrap pr-2 text-sm leading-relaxed">{sp.passage.body}</div>
+            </details>
+          )}
+          <p className="mt-4 whitespace-pre-wrap text-lg font-bold">{sp.question}</p>
+        </>); })()}
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {opts.map((o, k) => {
             const l = String.fromCharCode(65 + k);
