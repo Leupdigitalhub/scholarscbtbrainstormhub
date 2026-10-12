@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchAll } from "@/lib/admin-data";
 import { useSubjects } from "@/lib/subjects";
+import { splitPassage, passageKind, passageLabel } from "@/lib/passage";
 
 export const DEFAULT_BANK_TABS = ["English", "Mathematics", "Physics", "Chemistry", "Biology"];
 
@@ -90,16 +91,31 @@ export function BankPicker({ testId, position, subject = "", onDone }: { testId:
                 <Button variant="outline" onClick={selectRange}>Select numbers</Button>
               </div>
               <div className="max-h-[55vh] space-y-2 overflow-y-auto">
-                {rows.map((x, i) => (
-                  <label key={x.id} className="flex cursor-pointer gap-3 rounded-xl border bg-card p-3">
-                    <Checkbox checked={!!picked[x.id]} onCheckedChange={() => toggle(x)} />
-                    <div className="text-sm">
-                      <p className="font-bold">{i + 1}. {x.text}</p>
-                      {(x.options as string[]).length > 0 && <p className="text-muted-foreground">{(x.options as string[]).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("   ")}</p>}
-                      <p className="text-success">Answer: {x.correct_answer}</p>
+                {(["Passage", "Summary", "General"] as const).map((g) => {
+                  const grp = rows.map((x, i) => ({ x, i })).filter(({ x }) => {
+                    const s = splitPassage(x.text);
+                    return (s.passage ? passageKind(s.passage.title) : "General") === g;
+                  });
+                  if (!grp.length) return null;
+                  return (
+                    <div key={g} className="space-y-2">
+                      <div className="flex items-center justify-between rounded-lg bg-muted p-2">
+                        <p className="font-bold">{g === "Passage" ? "Comprehension Passages" : g === "Summary" ? "Summary Passages" : "General Questions"} ({grp.length})</p>
+                        <Button size="sm" variant="outline" onClick={() => setPicked((p) => { const n = { ...p }; grp.forEach(({ x }) => { n[x.id] = x; }); return n; })}>Select group</Button>
+                      </div>
+                      {grp.map(({ x, i }) => (
+                        <label key={x.id} className="flex cursor-pointer gap-3 rounded-xl border bg-card p-3">
+                          <Checkbox checked={!!picked[x.id]} onCheckedChange={() => toggle(x)} />
+                          <div className="text-sm">
+                            <p className="font-bold">{i + 1}. {passageLabel(x.text)}</p>
+                            {(x.options as string[]).length > 0 && <p className="text-muted-foreground">{(x.options as string[]).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("   ")}</p>}
+                            <p className="text-success">Answer: {x.correct_answer}</p>
+                          </div>
+                        </label>
+                      ))}
                     </div>
-                  </label>
-                ))}
+                  );
+                })}
                 {rows.length === 0 && <p className="p-4 text-sm text-muted-foreground">No {sub} questions in the bank yet. Import some on the Question Bank page.</p>}
               </div>
             </div>
