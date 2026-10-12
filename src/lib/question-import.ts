@@ -68,9 +68,16 @@ function one(q: ParsedQ): string {
 export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: string[] } {
   // Summary/cloze format: [SUMMARY] or [PASSAGE] ... [SUMMARY QUESTION(S)] ... [/SUMMARY]
   raw = raw
+    // typo tolerance: [SUMMMARY], [SUMARY], [PASAGE] etc.
+    .replace(/\[\s*SUM+A?R+Y\s*\]/gi, "[SUMMARY]")
+    .replace(/\[\s*PAS+AGE\s*\]/gi, "[PASSAGE]")
+    // explicit end tags: [PASSAGE END], [SUMMARY END], [END SUMMARY], [/SUMMARY], [/CLOZE]
+    .replace(/\[\s*(?:SUM+A?R+Y|PAS+AGE|CLOZE)\s+END\s*\]|\[\s*END\s+(?:SUM+A?R+Y|CLOZE)\s*\]|\[\s*\/\s*(?:SUM+A?R+Y|CLOZE)\s*\]/gi, "\u2064END\u2064")
     .replace(/\[(SUMMARY|CLOZE)\]/gi, (_m, k) => `[PASSAGE]\u2063${k.toUpperCase()}\u2063`)
-    .replace(/\[(SUMMARY|PASSAGE|CLOZE)\s+QUESTIONS?\]/gi, "[/PASSAGE]")
-    .replace(/\[\/(SUMMARY|CLOZE)\]/gi, "[END PASSAGE]");
+    .replace(/\[\s*(SUM+A?R+Y|PAS+AGE|CLOZE)\s+QUESTIONS?\s*\]/gi, "[/PASSAGE]")
+    // major section dividers (===== GENERAL ENGLISH =====, --- LITERATURE ---) close any open block
+    .replace(/^[ \t]*(?:={3,}|-{3,}|\*{3,}|#{3,})[^\n]*$/gm, "\u2064END\u2064")
+    .replace(/\u2064END\u2064/g, "[END PASSAGE]");
   const re = /\[PASSAGE\]([\s\S]*?)\[\/PASSAGE\]|\[END PASSAGE\]/gi;
   const out: ParsedQ[] = [];
   const problems: string[] = [];
