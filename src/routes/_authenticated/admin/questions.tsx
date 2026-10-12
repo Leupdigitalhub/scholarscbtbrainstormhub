@@ -68,7 +68,7 @@ function QuestionBank() {
         {rows.map((x, i) => (
           <div key={x.id} className="flex items-start justify-between gap-3 rounded-xl border bg-card p-4">
             <div className="text-sm">
-              <p className="font-bold">{i + 1}. {passageLabel(x.text)}</p>
+              <p className="font-bold">{i + 1}. {(() => { const g = x.text.startsWith("⟦P⟧") ? (/summary|cloze/i.test(x.text.split("⟦T⟧")[0] ?? "") ? "Summary" : "Passage") : "General"; return <span className={`mr-1 rounded px-1.5 py-0.5 text-xs ${g === "General" ? "bg-muted text-muted-foreground" : "bg-primary/15 text-primary"}`}>{g}</span>; })()}{passageLabel(x.text)}</p>
               {(x.options as string[]).length > 0 && <p>{(x.options as string[]).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("   ")}</p>}
               <p className="text-success">Answer: {x.correct_answer}</p>
               {x.explanation && <p className="whitespace-pre-line text-muted-foreground">Explanation: {x.explanation}</p>}
