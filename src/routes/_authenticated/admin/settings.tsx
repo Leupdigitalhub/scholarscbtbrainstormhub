@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { type GradeBand, useLists, useSettings } from "@/lib/auth";
+import { PinManager } from "@/components/AccessPins";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
@@ -25,6 +26,7 @@ function SettingsPage() {
         <ListEditor table="subjects" title="Subjects" />
         <ListEditor table="classes" title="Classes" />
       </div>
+      <PinManager />
       <div className="rounded-2xl border bg-card p-6">
         <h2 className="text-lg font-bold">Grading scale</h2>
         <p className="text-sm text-muted-foreground">Minimum percentage for each grade.</p>
