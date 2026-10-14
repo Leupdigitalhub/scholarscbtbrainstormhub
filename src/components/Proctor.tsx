@@ -322,7 +322,10 @@ export function ProctorReview({ attemptId }: { attemptId: string }) {
         {camOff > 0 && <span className="rounded-full bg-destructive/15 px-3 py-1 font-bold text-destructive">Camera turned off {camOff}×</span>}
       </div>
       <div className="mt-3">
-        <p className="mb-1 text-sm font-bold">Exam recording</p>
+        <div className="mb-1 flex items-center justify-between">
+          <p className="text-sm font-bold">Exam recording</p>
+          {clips.length > 0 && <Button size="sm" variant="outline" className="text-destructive" onClick={deleteVideos}>Delete recording</Button>}
+        </div>
         {clips.length === 0 ? <p className="text-sm text-muted-foreground">No recording yet. Clips (with sound) appear every 20 seconds while the student writes.</p>
           : <RecordingPlayer clips={clips.map((c) => ({ url: c.url!, at: c.created_at }))} />}
       </div>
@@ -340,24 +343,41 @@ export function ProctorReview({ attemptId }: { attemptId: string }) {
   );
 }
 
-/** Plays the 30-second clips back to back, like one continuous video. */
+/** Plays the saved pieces as one continuous video with a single timeline for the whole exam. */
 export function RecordingPlayer({ clips }: { clips: { url: string; at: string }[] }) {
+  const seg = CLIP_MS / 1000;
+  const total = clips.length * seg;
   const [i, setI] = useState(0);
+  const [pos, setPos] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const seekTo = useRef<number | null>(null);
   const ref = useRef<HTMLVideoElement>(null);
   const cur = clips[Math.min(i, clips.length - 1)];
-  useEffect(() => { if (i > 0) void ref.current?.play().catch(() => {}); }, [i]);
+  const fmt = (s: number) => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return `${h ? h + ":" : ""}${String(m).padStart(h ? 2 : 1, "0")}:${String(x).padStart(2, "0")}`; };
   if (!cur) return null;
+  const seek = (t: number) => {
+    const k = Math.min(clips.length - 1, Math.floor(t / seg));
+    const off = t - k * seg;
+    if (k === i && ref.current) ref.current.currentTime = off;
+    else { seekTo.current = off; setI(k); }
+    setPos(t);
+  };
   return (
     <div>
-      <video ref={ref} key={cur.url} src={cur.url} controls playsInline className="w-full rounded-xl bg-muted"
-        onEnded={() => setI((n) => (n + 1 < clips.length ? n + 1 : n))} />
-      <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-        <span>Part {Math.min(i, clips.length - 1) + 1} of {clips.length} · {new Date(cur.at).toLocaleTimeString()}</span>
-        <span className="flex gap-2">
-          <button className="font-bold text-primary disabled:opacity-40" disabled={i === 0} onClick={() => setI((n) => n - 1)}>Previous</button>
-          <button className="font-bold text-primary disabled:opacity-40" disabled={i >= clips.length - 1} onClick={() => setI((n) => n + 1)}>Next</button>
-        </span>
+      <video ref={ref} key={cur.url} src={cur.url} playsInline className="w-full rounded-xl bg-muted"
+        onLoadedMetadata={() => { const v = ref.current; if (!v) return; if (seekTo.current != null) { v.currentTime = seekTo.current; seekTo.current = null; } if (playing) void v.play().catch(() => {}); }}
+        onTimeUpdate={() => { const v = ref.current; if (v) setPos(i * seg + Math.min(v.currentTime, seg)); }}
+        onEnded={() => { if (i + 1 < clips.length) setI(i + 1); else setPlaying(false); }}
+        onClick={() => { const v = ref.current; if (!v) return; if (v.paused) { setPlaying(true); void v.play(); } else { setPlaying(false); v.pause(); } }} />
+      <div className="mt-2 flex items-center gap-2 text-xs">
+        <button className="rounded-md bg-primary px-3 py-1 font-bold text-primary-foreground" onClick={() => {
+          const v = ref.current; if (!v) return;
+          if (v.paused) { setPlaying(true); void v.play(); } else { setPlaying(false); v.pause(); }
+        }}>{playing ? "Pause" : "Play"}</button>
+        <input type="range" min={0} max={total} step={1} value={pos} onChange={(e) => seek(Number(e.target.value))} className="flex-1 accent-primary" aria-label="Recording timeline" />
+        <span className="font-mono text-muted-foreground">{fmt(pos)} / {fmt(total)}</span>
       </div>
+      <p className="mt-1 text-xs text-muted-foreground">Whole exam recording · started {new Date(clips[0]!.at).toLocaleTimeString()}</p>
     </div>
   );
 }
