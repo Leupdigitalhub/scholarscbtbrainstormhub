@@ -20,3 +20,6 @@
 - [x] Registration selfie avatar, random SCHCBT#### STUDENT ID + welcome popup, "STUDENT ID" label everywhere
 - [x] Brain Spark 30s moral lessons, activity merge + select-to-delete, 1-second CCTV grid
 - [ ] Student–Admin messaging: screens built; needs support_messages table (docs/sql/support_messages.sql) run on the backend — no database access from this project
+- [ ] Access PIN system (admin generator, student redeem, exam lock prompts "Message Admin" — no WhatsApp)
+- [ ] Admin button to delete an attempt's recorded video clips
+- [ ] Recording plays back as one continuous video (clips kept for live view + crash safety)
