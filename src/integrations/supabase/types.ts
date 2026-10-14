@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_pins: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          redeemed_at: string | null
+          redeemed_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+        }
+        Relationships: []
+      }
       admin_notifications: {
         Row: {
           attempt_id: string | null
@@ -546,6 +570,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_videos: { Args: { _attempt_id: string }; Returns: string[] }
       admin_exists: { Args: never; Returns: boolean }
       admin_heartbeat: { Args: never; Returns: undefined }
       admin_live_attempts: {
@@ -600,6 +625,7 @@ export type Database = {
         }[]
       }
       log_student_login: { Args: never; Returns: undefined }
+      my_access: { Args: never; Returns: boolean }
       my_corrections: { Args: { _attempt_id: string }; Returns: Json }
       my_results: {
         Args: never
@@ -625,6 +651,7 @@ export type Database = {
         Returns: string[]
       }
       recalc_attempt: { Args: { _attempt_id: string }; Returns: undefined }
+      redeem_pin: { Args: { _code: string }; Returns: boolean }
       save_answers: {
         Args: { _answers: Json; _attempt_id: string }
         Returns: boolean

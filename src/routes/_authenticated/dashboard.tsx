@@ -8,6 +8,13 @@ import { useAvatar } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/lib/auth";
+import { RedeemPin, useAccess } from "@/components/AccessPins";
+
+function DashboardPin() {
+  const a = useAccess();
+  if (a.data !== false) return null;
+  return <RedeemPin />;
+}
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "My Dashboard — SCHOLARS CBT" }] }),
@@ -102,6 +109,7 @@ function Dashboard() {
         </div>
 
         <aside className="space-y-4 lg:pt-8">
+          <DashboardPin />
           <div className="rounded-2xl border bg-card p-4">
             <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground"><Sparkles className="h-4 w-4 text-primary" />Don't miss these</p>
             <Link to="/science" className="mt-3 block overflow-hidden rounded-xl bg-primary p-4 text-primary-foreground transition hover:opacity-90">
