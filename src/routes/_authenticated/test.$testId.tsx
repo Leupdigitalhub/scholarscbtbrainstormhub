@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { StudentShell } from "@/components/StudentShell";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { RedeemPin, useAccess } from "@/components/AccessPins";
 
 export const Route = createFileRoute("/_authenticated/test/$testId")({
   head: () => ({ meta: [{ title: "Test Instructions — SCHOLARS CBT" }] }),
@@ -15,6 +16,7 @@ function Instructions() {
   const { testId } = Route.useParams();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+  const access = useAccess();
   const { data, isLoading } = useQuery({
     queryKey: ["student-tests"],
     queryFn: async () => (await supabase.rpc("student_tests")).data ?? [],
@@ -84,7 +86,9 @@ function Instructions() {
             <p className="mt-2 text-sm">{picked.length} of {pick} chosen</p>
           </div>
         )}
-        <Button onClick={start} disabled={busy || (multi && picked.length !== pick)} className="mt-6 h-14 w-full text-lg">{busy ? "Starting..." : "Start CBT"}</Button>
+        {access.data === false
+          ? <div className="mt-6"><RedeemPin /></div>
+          : <Button onClick={start} disabled={busy || access.isLoading || (multi && picked.length !== pick)} className="mt-6 h-14 w-full text-lg">{busy ? "Starting..." : "Start CBT"}</Button>}
       </div>
     </StudentShell>
   );
