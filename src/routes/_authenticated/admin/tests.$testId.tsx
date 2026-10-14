@@ -45,7 +45,25 @@ function EditTest() {
   const countOf = (n: string) => questions.filter((q) => q.subject.toLowerCase() === n.toLowerCase()).length;
   const list = t.multi_subject ? questions.filter((q) => q.subject.toLowerCase() === cur.toLowerCase()) : questions;
   const shown = showAll ? list : list.slice(0, 50);
-  const need = (n: string) => t.per_subject_count + (t.compulsory_subjects.includes(n) ? 10 : 0);
+  const need = (n: string) => t.per_subject_count + (n.toLowerCase() === "english" ? Math.min(t.per_subject_count, 20) : 0);
+  async function autoFill() {
+    const sub = cur || t!.subject;
+    const { data: bankRows, error } = await supabase.from("bank_questions").select("*").eq("subject", sub).order("created_at").limit(5000);
+    if (error) { toast.error(error.message); return; }
+    const have = new Set(questions.map((q) => q.text));
+    let pos = questions.length + 1;
+    const ins = (bankRows ?? []).filter((b) => !have.has(b.text)).map((b) => ({
+      test_id: testId, subject: sub, type: b.type, text: b.text, options: b.options,
+      correct_answer: b.correct_answer, explanation: b.explanation, marks: b.marks, position: pos++,
+    }));
+    if (!ins.length) { toast.info(`No new ${sub} questions in the bank`); return; }
+    for (let i = 0; i < ins.length; i += 200) {
+      const r = await supabase.from("questions").insert(ins.slice(i, i + 200));
+      if (r.error) { toast.error(r.error.message); return; }
+    }
+    toast.success(`${ins.length} ${sub} questions added from the bank, in import order. Each student gets their own draw.`);
+    refresh();
+  }
   const short = subjects.filter((n) => countOf(n) < need(n));
   const total = questions.reduce((s, q) => s + Number(q.marks), 0);
   const drawn = t.draw_count && t.draw_count < questions.length ? t.draw_count : questions.length;
@@ -130,6 +148,7 @@ function EditTest() {
             <QuestionEditor key={cur} subject={cur} testId={testId} position={questions.length + 1} onDone={() => { setEditing(null); refresh(); }} onSaveAnother={refresh} />
           ) : (
             <div className="space-y-3">
+              <Button className="h-12 w-full" variant="secondary" onClick={autoFill}>Auto-fill all {cur || t.subject || ""} questions from Question Bank</Button>
               <BankPicker key={"b" + cur} subject={cur} testId={testId} position={questions.length + 1} onDone={refresh} />
               <Button variant="outline" className="h-12 w-full border-dashed" onClick={() => setEditing("new")}><Plus className="mr-1 h-4 w-4" />Add Question</Button>
               <ImportQuestions key={cur} subject={cur} testId={testId} position={questions.length + 1} onDone={refresh} />

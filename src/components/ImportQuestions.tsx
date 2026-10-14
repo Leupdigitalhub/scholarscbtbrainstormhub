@@ -56,10 +56,12 @@ export function ImportQuestions({ testId, position, onDone, subject = "", bank =
     setBusy(true);
     let pos = position;
     let done = 0;
+    const base = Date.now();
     for (let i = 0; i < parsed.length; i += 100) {
       const slice = parsed.slice(i, i + 100);
       const { error } = bank
-        ? await supabase.from("bank_questions").insert(slice.map((q) => ({
+        ? await supabase.from("bank_questions").insert(slice.map((q, j) => ({
+            created_at: new Date(base + (i + j) * 10).toISOString(),
             type: q.type, text: q.text, options: q.options, correct_answer: q.correct_answer, marks: q.marks, subject, explanation: q.explanation ?? "",
           })))
         : await supabase.from("questions").insert(slice.map((q) => ({

@@ -34,7 +34,7 @@ export function TestForm({ initial, onSubmit, submitLabel, questionCount }: { in
     shuffle_options: initial?.shuffle_options ?? false,
     draw_count: initial?.draw_count == null ? "" : String(initial.draw_count),
     multi_subject: initial?.multi_subject ?? false,
-    per_subject_count: String(initial?.per_subject_count ?? 20),
+    per_subject_count: String(initial?.per_subject_count ?? 40),
     show_corrections: initial?.show_corrections ?? false,
     gift_message: initial?.gift_message ?? "",
     gift_enabled: initial?.gift_enabled ?? true,
