@@ -172,7 +172,7 @@ function EditTest() {
               ["Test name", t.title], ["Subject", t.subject], ["Class", t.class || "All classes"],
               ["Questions", questions.length], ["Total marks", total], ["Duration", `${t.duration_minutes} minutes`],
               ["Pass mark", `${t.pass_percentage}%`],
-              ...(t.multi_subject ? [["Subjects", subjects.map((n) => `${n}: ${countOf(n)}`).join(", ")], ["Each student gets", `${t.compulsory_subjects.join(", ")} ${t.per_subject_count + 10} + ${t.electives_to_pick} choices × ${t.per_subject_count} = ${t.per_subject_count * (t.compulsory_subjects.length + t.electives_to_pick) + 10 * t.compulsory_subjects.length} questions`]] : []),
+              ...(t.multi_subject ? [["Subjects", subjects.map((n) => `${n}: ${countOf(n)}`).join(", ")], ["Each student gets", `${t.compulsory_subjects.join(", ")} ${t.per_subject_count + Math.min(t.per_subject_count, 20)} + ${t.electives_to_pick} choices × ${t.per_subject_count} = ${t.per_subject_count * (t.compulsory_subjects.length + t.electives_to_pick) + Math.min(t.per_subject_count, 20) * t.compulsory_subjects.length} questions`]] : []),
               [t.multi_subject ? "Without subjects" : "Each student gets", drawn === questions.length ? `${drawn} questions` : `${drawn} of ${questions.length}, drawn at random`],
               ["Question order", t.shuffle_questions ? "Shuffled for each student" : "Same for everyone"],
               ["Answer options", t.shuffle_options ? "Shuffled for each student" : "Same for everyone"],

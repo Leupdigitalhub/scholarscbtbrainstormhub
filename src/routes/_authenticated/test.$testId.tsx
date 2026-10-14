@@ -64,7 +64,7 @@ function Instructions() {
         {multi && cfg.data && (
           <div className="mt-6 rounded-2xl border bg-muted/40 p-4">
             <p className="font-bold">Choose your subjects</p>
-            <p className="text-sm text-muted-foreground">{cfg.data.compulsory.join(", ")} (compulsory): {cfg.data.per_subject_count + 10} questions. Pick exactly {pick} more: {cfg.data.per_subject_count} questions each. Total: {cfg.data.per_subject_count * (cfg.data.compulsory.length + pick) + 10 * cfg.data.compulsory.length} questions.</p>
+            <p className="text-sm text-muted-foreground">{cfg.data.compulsory.join(", ")} (compulsory): {cfg.data.per_subject_count + Math.min(cfg.data.per_subject_count, 20)} questions. Pick exactly {pick} more: {cfg.data.per_subject_count} questions each. Total: {cfg.data.per_subject_count * (cfg.data.compulsory.length + pick) + Math.min(cfg.data.per_subject_count, 20) * cfg.data.compulsory.length} questions.</p>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {cfg.data.compulsory.map((n) => (
                 <div key={n} className="flex items-center justify-between rounded-xl border-2 border-success bg-success/10 p-3 font-bold">
