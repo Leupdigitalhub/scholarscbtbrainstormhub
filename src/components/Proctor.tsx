@@ -287,6 +287,7 @@ export function Proctor({ attemptId, studentId, children }: { attemptId: string;
 
 export function ProctorReview({ attemptId }: { attemptId: string }) {
   const [items, setItems] = useState<{ id: string; kind: string; created_at: string; url?: string | null | undefined }[] | null>(null);
+  const [reload, setReload] = useState(0);
   useEffect(() => {
     void (async () => {
       const { data } = await supabase.from("proctor_events").select("*").eq("attempt_id", attemptId).order("created_at");
@@ -296,7 +297,16 @@ export function ProctorReview({ attemptId }: { attemptId: string }) {
       const map = new Map(signed.map((s) => [s.path, s.signedUrl]));
       setItems(rows.map((r) => ({ id: r.id, kind: r.kind, created_at: r.created_at, url: r.photo_path ? map.get(r.photo_path) : undefined })));
     })();
-  }, [attemptId]);
+  }, [attemptId, reload]);
+  async function deleteVideos() {
+    if (!confirm("Permanently delete all recorded video for this exam?")) return;
+    const { data, error } = await supabase.rpc("admin_delete_videos", { _attempt_id: attemptId });
+    if (error) { toast.error(error.message); return; }
+    const paths = (data ?? []) as string[];
+    for (let i = 0; i < paths.length; i += 100) await supabase.storage.from("proctor").remove(paths.slice(i, i + 100));
+    toast.success("Recording deleted");
+    setReload((n) => n + 1);
+  }
   if (!items) return <p className="text-sm text-muted-foreground">Loading supervision record...</p>;
   const photos = items.filter((i) => i.kind === "snapshot");
   const clips = items.filter((i) => i.kind === "video" && i.url);
