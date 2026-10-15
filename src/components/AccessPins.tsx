@@ -52,6 +52,7 @@ export function PinManager() {
     <div className="rounded-2xl border bg-card p-6">
       <h2 className="text-lg font-bold">Access PINs</h2>
       <p className="text-sm text-muted-foreground">Sell a PIN to a student; once they enter it, full exams unlock on their account. Each PIN works once.</p>
+      <PinSwitch />
       <div className="mt-3 flex flex-wrap gap-2">
         <Input type="number" min={1} max={200} value={count} onChange={(e) => setCount(Number(e.target.value))} className="w-24" />
         <Button onClick={generate} disabled={busy}>Generate PINs</Button>
