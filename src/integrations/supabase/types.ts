@@ -106,6 +106,7 @@ export type Database = {
           last_email_at: string | null
           lesson_name: string
           notify_email: string
+          pin_required: boolean
           show_rankings: boolean
         }
         Insert: {
@@ -115,6 +116,7 @@ export type Database = {
           last_email_at?: string | null
           lesson_name?: string
           notify_email?: string
+          pin_required?: boolean
           show_rankings?: boolean
         }
         Update: {
@@ -124,6 +126,7 @@ export type Database = {
           last_email_at?: string | null
           lesson_name?: string
           notify_email?: string
+          pin_required?: boolean
           show_rankings?: boolean
         }
         Relationships: []

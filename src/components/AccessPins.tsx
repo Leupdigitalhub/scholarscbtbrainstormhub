@@ -52,6 +52,7 @@ export function PinManager() {
     <div className="rounded-2xl border bg-card p-6">
       <h2 className="text-lg font-bold">Access PINs</h2>
       <p className="text-sm text-muted-foreground">Sell a PIN to a student; once they enter it, full exams unlock on their account. Each PIN works once.</p>
+      <PinSwitch />
       <div className="mt-3 flex flex-wrap gap-2">
         <Input type="number" min={1} max={200} value={count} onChange={(e) => setCount(Number(e.target.value))} className="w-24" />
         <Button onClick={generate} disabled={busy}>Generate PINs</Button>
@@ -120,6 +121,37 @@ export function RedeemPin({ onDone }: { onDone?: () => void }) {
         <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="SCH-1234-5678" className="font-mono" />
         <Button disabled={busy}>Activate</Button>
       </form>
+    </div>
+  );
+}
+
+/** Admin: master switch — when off, every student can start exams without a PIN. */
+function PinSwitch() {
+  const qc = useQueryClient();
+  const s = useQuery({
+    queryKey: ["pin-required"],
+    queryFn: async () => (await supabase.from("app_settings").select("pin_required").eq("id", 1).maybeSingle()).data?.pin_required ?? true,
+  });
+  const on = s.data ?? true;
+  async function toggle() {
+    const { error } = await supabase.from("app_settings").update({ pin_required: !on }).eq("id", 1);
+    if (error) { toast.error(error.message); return; }
+    toast.success(!on ? "PIN is now required for exams" : "PIN switched off — exams are free for all");
+    void qc.invalidateQueries({ queryKey: ["pin-required"] });
+    void qc.invalidateQueries({ queryKey: ["my-access"] });
+  }
+  return (
+    <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border p-3">
+      <div>
+        <p className="text-sm font-semibold">Require Access PIN for exams</p>
+        <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${on ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
+          {on ? "Active — PIN required" : "Inactive — free access for all"}
+        </span>
+      </div>
+      <button type="button" role="switch" aria-checked={on} aria-label="Require Access PIN" disabled={s.isLoading} onClick={toggle}
+        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${on ? "bg-primary" : "bg-input"}`}>
+        <span className={`absolute top-1 h-5 w-5 rounded-full bg-background shadow transition-all ${on ? "left-6" : "left-1"}`} />
+      </button>
     </div>
   );
 }

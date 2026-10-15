@@ -141,6 +141,13 @@
       "when": 1791970900461,
       "tag": "0019_access_pins",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792077185945,
+      "tag": "0020_pin_required_switch",
+      "breakpoints": true
     }
   ]
 }
