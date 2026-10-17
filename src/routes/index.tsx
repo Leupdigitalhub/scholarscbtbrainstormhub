@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getIsAdmin } from "@/lib/auth";
 import hall from "@/assets/cbt-hall.jpg";
+import { InstallBar } from "@/components/InstallBar";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -42,6 +43,7 @@ function Home() {
   }, [navigate]);
   return (
     <main className="min-h-screen">
+      <InstallBar />
       <section className="relative overflow-hidden text-foreground">
         <img src={HERO} alt="Scholars studying in a quiet library" width={1600} height={1000} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/30" />
